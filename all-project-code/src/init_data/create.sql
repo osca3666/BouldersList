@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> bfa9cb847768274767b1ae6b516ca2e12b7724ae
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users(
 	user_id SERIAL PRIMARY KEY,
@@ -7,6 +12,7 @@ CREATE TABLE users(
 	last_name VARCHAR(50) NOT NULL,
  	password_hash VARCHAR(255) NOT NULL
 );
+<<<<<<< HEAD
 
 DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
@@ -27,3 +33,5 @@ CREATE TABLE payments(
     	payment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     	payment_status VARCHAR(50) NOT NULL
 );
+=======
+>>>>>>> bfa9cb847768274767b1ae6b516ca2e12b7724ae
