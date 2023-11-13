@@ -1,0 +1,38 @@
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Information and Orders</title>
+</head>
+<body>
+  <h1>User Information</h1>
+  <p>User ID: <%= user.user_id %></p>
+  <p>Username: <%= user.username %></p>
+  <p>Email: <%= user.email %></p>
+  <p>First Name: <%= user.first_name %></p>
+  <p>Last Name: <%= user.last_name %></p>
+
+  <h2>Orders</h2>
+  <% if (orders.length > 0) { %>
+    <ul>
+      <% orders.forEach(order => { %>
+        <li>
+          Order ID: <%= order.order_id %>,
+          Total: <%= order.total %>,
+          Payment ID: <%= order.payment %>,
+          Created At: <%= order.created_at %>,
+          Modified At: <%= order.modified_at %>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No orders found for this user.</p>
+  <% } %>
+</body>
+</html>
+
+<%- include ('../partials/footer') %>
