@@ -36,3 +36,4 @@ CREATE TABLE category(
         description TEXT,
         service_id int
 );
+

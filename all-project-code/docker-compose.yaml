@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:14
+    env_file: .env
+    expose:
+      - '5432'
+    volumes:
+      - group-project:/var/lib/postgresql/data
+      - ./init_data:/docker-entrypoint-initdb.d
+  web:
+    image: node:lts
+    user: 'node'
+    working_dir: /home/node/app
+    env_file: .env
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./:/home/node/app
+    command: 'npm run testandrun'
+# This defines our volume(s), which will persist throughout startups.
+# If you want to get rid of a hanging volume, e.g. to test your database init,
+# run `docker-compose rm -v`. Note that this will remove ALL of your data, so
+# be extra sure you've made a stable backup somewhere.
+volumes:
+  group-project:
