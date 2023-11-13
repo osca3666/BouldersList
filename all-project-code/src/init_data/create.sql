@@ -35,3 +35,11 @@ CREATE TABLE category(
         description VARCHAR(200),
         service_id INTEGER
 );
+
+DROP TABLE IF EXISTS review CASCADE;
+CREATE TABLE review(
+    	review_id SERIAL PRIMARY KEY,
+    	business_id INT REFERENCES businesses(business_id),
+        user_id INT REFERENCES users(user_id),
+		rating INT CHECK (rating >= 1 AND rating <= 5)
+);
