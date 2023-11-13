@@ -31,8 +31,8 @@ CREATE TABLE payments(
 DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category(
     	category_id SERIAL PRIMARY KEY,
-    	name VARCHAR,
-        description TEXT,
-        service_id int
+    	name VARCHAR(50) NOT NULL,
+        description VARCHAR(200),
+        service_id INTEGER
 );
 
