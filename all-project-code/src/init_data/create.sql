@@ -29,3 +29,11 @@ CREATE TABLE payments(
     	payment_status VARCHAR(50) NOT NULL
 );
 
+DROP TABLE IF EXISTS category CASCADE;
+CREATE TABLE category(
+    	category_id SERIAL PRIMARY KEY,
+    	name VARCHAR,
+        description TEXT,
+        service_id int
+);
+
