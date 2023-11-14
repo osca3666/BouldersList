@@ -47,7 +47,8 @@ DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category(
     	category_id SERIAL PRIMARY KEY,
     	name VARCHAR(50) NOT NULL,
-        description VARCHAR(200)
+        description VARCHAR(200),
+		service_id INTEGER
 );
 
 DROP TABLE IF EXISTS review CASCADE;
@@ -69,3 +70,5 @@ CREATE TABLE service_to_category(
     service_id INTEGER REFERENCES services(service_id),
     category_id INTEGER REFERENCES category(category_id)
 );
+
+
