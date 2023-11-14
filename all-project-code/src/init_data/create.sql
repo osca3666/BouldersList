@@ -54,7 +54,7 @@ CREATE TABLE category(
     	category_id SERIAL PRIMARY KEY,
     	name VARCHAR(50) NOT NULL,
         description VARCHAR(200),
-		service_id int
+		service_id INTEGER
 );
 
 DROP TABLE IF EXISTS review CASCADE;
