@@ -28,6 +28,7 @@ DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
    	order_id SERIAL PRIMARY KEY, 
     user_id INTEGER REFERENCES users(user_id),
+	payment_id INTEGER REFERENCES payments(payment_id)
     total DECIMAL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -41,12 +42,6 @@ CREATE TABLE payments(
     	payment_amount DECIMAL,
     	payment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     	payment_status VARCHAR(50) NOT NULL
-);
-
-DROP TABLE IF EXISTS order_details_to_payments CASCADE;
-CREATE TABLE order_details_to_payments(
-	payment_id INTEGER REFERENCES payments(payment_id),
-	order_id INTEGER REFERENCES order_details(order_id)
 );
 
 DROP TABLE IF EXISTS category CASCADE;
