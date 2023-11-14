@@ -64,7 +64,7 @@ app.post('/register', async (req, res) => {
   }
 
   //hash the password using bcrypt library
-  const hash_password =  await bcrypt.hash(req.body.password, 10);
+  const hash_password =  await bcrypt.hash(password, 10);
 
   const query1 = `select * from users where users.username = '${req.body.username}';`;
   const query = `INSERT INTO users (password_hash, username, email, first_name, last_name) VALUES ('${hash_password}', '${username}', '${email}', '${first_name}', '${last_name}') RETURNING *;`;
@@ -75,7 +75,7 @@ app.post('/register', async (req, res) => {
   .then((data) => {
 
     console.log("Data rows: ",data);
-    if(data == false)
+    if(data.length == 0)
     {
       db.one(query)
   .then((rows) => {
@@ -115,24 +115,32 @@ app.post('/login', async (req, res) => {
     const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
 
     if (!user) {
-      return res.redirect('/register');
+      // User not found or incorrect password
+      res.render('pages/login', { 
+        error: 'Incorrect username or password. If you do not have an account, please register.'
+      });
+    } else {
+      const match = await bcrypt.compare(password, user.password_hash);
+      if (!match) {
+        // Password does not match
+        res.render('pages/login', { 
+          error: 'Incorrect username or password. If you do not have an account, please register.'
+        });
+      } else {
+        // Successful login
+        req.session.user = user;
+        await req.session.save();
+        res.redirect('/');
+      }
     }
-
-    const match = await bcrypt.compare(password, user.password);
-
-    if (!match) {
-      throw new Error('Incorrect username or password');
-    }
-
-    req.session.user = user;
-    await req.session.save();
-
-    res.redirect('/discover');
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).render('login', { error: 'Incorrect username or password or an internal error occurred' });
+    res.status(500).render('pages/login', { 
+      error: 'An internal error occurred. Please try again later.'
+    });
   }
 });
+
 
 app.get('/business', (req, res) => {
     res.render('pages/business')

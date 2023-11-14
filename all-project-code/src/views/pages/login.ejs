@@ -20,6 +20,12 @@
             <input type="submit" value="Log in">
         </div>
     </form>
+    <% if (typeof error !== 'undefined') { %>
+      <div class="alert alert-danger">
+        <%= error %>
+      </div>
+    <% } %>    
+
     <p class="register-prompt">
         Don't have an account? <a href="/register">Register here</a>.
     </p>
