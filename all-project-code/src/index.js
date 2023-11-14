@@ -4,6 +4,7 @@
 
 const express = require('express'); // To build an application server or API
 const app = express();
+app.use(express.static('public'));
 const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
@@ -57,11 +58,30 @@ app.use(
   })
 );
 
-// *****************************************************
-// <!-- Section 4 : API Routes -->
-// *****************************************************
+app.get("/", (req, res) => {
+  res.render("pages/register");
+});
 
-// TODO - Include your API routes here
+app.get("/register", (req, res) => {
+    res.render("pages/register");
+  });
+// Register
+app.post('/register', async (req, res) => {
+
+    const password = req.body.password;
+    const hash = await bcrypt.hash(password, 10);
+    const username = req.body.username;
+
+    const query = "INSERT INTO users(username, password) VALUES($1, $2);";
+    const values = [username, hash];
+    db.none(query,values);
+
+    res.redirect("/login");
+});
+
+app.get('/login', (req, res) => {
+  res.render('pages/login');
+});
 
 app.get('/business', (req, res) => {
     res.render('pages/business')
