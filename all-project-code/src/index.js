@@ -54,18 +54,51 @@ app.get("/", (req, res) => {
 app.get("/register", (req, res) => {
     res.render("pages/register");
   });
-// Register
+
+// Register ---------------------
 app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+  const hash_password =  await bcrypt.hash(req.body.password, 10);
 
-    const password = req.body.password;
-    const hash = await bcrypt.hash(password, 10);
-    const username = req.body.username;
+  const query1 = `select * from users where users.username = '${req.body.username}';`;
 
-    const query = "INSERT INTO users(username, password) VALUES($1, $2);";
-    const values = [username, hash];
-    db.none(query,values);
+  const input_password = req.body.password;
+  const input_username = req.body.username;
+  const query = `INSERT INTO users (password_hash, username, email, first_name, last_name) VALUES ('${hash_password}', '${input_username}', '${req.body.email}', '${req.body.first_name}', '${req.body.last_name}') returning *;`;
 
+  //console.log("Input password:", hash_password);
+  //console.log("Input username:", input_username);
+
+  db.any(query1)
+  .then((data) => {
+
+    console.log("Data rows: ",data);
+    if(data == false)
+    {
+      db.one(query)
+  .then((rows) => {
+
+    console.log("Register: ",rows);
     res.redirect("/login");
+  })
+  .catch((err) => {
+      console.log(err);
+      res.redirect("/register");
+    });
+    }
+    else
+    {
+      const loginMessage = "User already exists";
+      res.render('pages/login', {message: loginMessage});
+    }
+
+  })
+  .catch((err) => {
+      console.log(err);
+      res.redirect("/register");
+});
+
+  
 });
 
 app.get('/login', (req, res) => {
