@@ -1,0 +1,33 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<main>
+    <div class="container">
+        <section class="hero-section">
+            <h1>Welcome to Boulder Catalog</h1>
+            <p>Discover top-rated services in your area.</p>
+            <a href="/services" class="cta-button">Browse Services</a>
+        </section>
+
+        <section class="popular-categories">
+            <h2>Popular Categories</h2>
+            <ul>
+                <li><a href="/category/1">Interior</a></li>
+                <li><a href="/category/2">Exterior</a></li>
+                <li><a href="/category/3">Lawn &amp; Garden</a></li>
+
+            </ul>
+        </section>
+
+        <section class="search-bar">
+            <p>Discover top-rated services in Boulder.</p>
+            <form action="/search" method="GET">
+                <input type="text" name="query" placeholder="Search for services">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+    </div>
+
+</main>
+
+<%- include ('../partials/footer') %>
