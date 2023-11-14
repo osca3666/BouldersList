@@ -1,38 +1,48 @@
 <%- include ('../partials/header') %>
 <%- include ('../partials/menu') %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Information and Orders</title>
-</head>
-<body>
-  <h1>User Information</h1>
-  <p>User ID: <%= user.user_id %></p>
-  <p>Username: <%= user.username %></p>
-  <p>Email: <%= user.email %></p>
-  <p>First Name: <%= user.first_name %></p>
-  <p>Last Name: <%= user.last_name %></p>
+<div class="container mt-4">
+  <section class="user-info-box">
+    <div class="d-flex align-items-center">
+      <div class="profile-picture">
+        <img src="/images/profile-avatar.png" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div>
+        <h2>JohnIsHere</h2>
+        <p>Name: John Doe</p>
+        <p>Email: john@example.com</p>
+      </div>
+    </div>
 
-  <h2>Orders</h2>
-  <% if (orders.length > 0) { %>
-    <ul>
-      <% orders.forEach(order => { %>
-        <li>
-          Order ID: <%= order.order_id %>,
-          Total: <%= order.total %>,
-          Payment ID: <%= order.payment %>,
-          Created At: <%= order.created_at %>,
-          Modified At: <%= order.modified_at %>
-        </li>
-      <% }); %>
-    </ul>
-  <% } else { %>
-    <p>No orders found for this user.</p>
-  <% } %>
-</body>
-</html>
+    <div class="order-summary-box">
+      <p><b>Total Orders: 1</b></p>
+<p><b>Paid (0) </b></p>
+<p><b>Shipped (1) </b></p>
+<p><b>Completed (0) </b></p>
+    </div>
+  </section>
+
+  <!-- Orders Table Section -->
+  <section class="mt-4">
+    <h2>My Orders</h2>
+    <table class="table">
+      <tr>
+        <th>Order ID</th>
+        <th>Total</th>
+        <th>Payment ID</th>
+        <th>Created At</th>
+        <th>Status</th>
+      </tr>
+      <tr>
+        <td>123243521</td>
+        <td>$147.28</td>
+        <td>45242</td>
+        <td>11/10/23</td>
+        <td>Shipped</td>
+      </tr>
+    </table>
+  </section>
+</div>
+
 
 <%- include ('../partials/footer') %>

@@ -5,7 +5,7 @@
 
 <main>
   <div class="container">
-    <h1>Register</h1>
+    <h1>Welcome to Boulder's List. Let's create your account.</h1>
     <div class="register-box">
       <% if (locals.error) { %>
         <p class="message"><%= error %></p>
@@ -30,6 +30,10 @@
         <div class="form-group">
           <label for="password">Email</label>
           <input type="text" id="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="user_agreement" name="user_agreement" required>
+          <label for="user_agreement">I agree to the <a href="/user-agreement" target="_blank">User Agreement</a>.</label>
         </div>
         <div class="form-group">
           <button type="submit">Register</button>
