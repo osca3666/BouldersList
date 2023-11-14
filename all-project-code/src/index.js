@@ -1,6 +1,3 @@
-// *****************************************************
-// <!-- Section 1 : Import Dependencies -->
-// *****************************************************
 
 const express = require('express'); // To build an application server or API
 const app = express();
@@ -10,10 +7,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
-
-// *****************************************************
-// <!-- Section 2 : Connect to DB -->
-// *****************************************************
 
 // database configuration
 const dbConfig = {
@@ -36,10 +29,6 @@ db.connect()
     console.log('ERROR:', error.message || error);
   });
 
-// *****************************************************
-// <!-- Section 3 : App Settings -->
-// *****************************************************
-
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
 
@@ -59,7 +48,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.render("pages/register");
+  res.render("pages/home");
 });
 
 app.get("/register", (req, res) => {
@@ -114,6 +103,33 @@ app.post('/register', async (req, res) => {
 
 app.get('/login', (req, res) => {
   res.render('pages/login');
+});
+
+app.post('/login', async (req, res) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+
+    if (!user) {
+      return res.redirect('/register');
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      throw new Error('Incorrect username or password');
+    }
+
+    req.session.user = user;
+    await req.session.save();
+
+    res.redirect('/discover');
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).render('login', { error: 'Incorrect username or password or an internal error occurred' });
+  }
 });
 
 app.get('/business', (req, res) => {
