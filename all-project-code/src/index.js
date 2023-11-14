@@ -59,7 +59,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.render("pages/register");
+  res.render("pages/home");
 });
 
 app.get("/register", (req, res) => {
