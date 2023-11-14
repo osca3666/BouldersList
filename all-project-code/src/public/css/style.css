@@ -1,0 +1,21 @@
+.navbar {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+  }
+  
+  .navbar .navbar-brand img {
+    height: 40px;
+  }
+  
+  .navbar .dropdown-menu {
+    right: 0;
+  }
+  
+  .navbar .nav-item .nav-link {
+    color: #555;
+  }
+  
+  .navbar .nav-item .nav-link:hover,
+  .navbar .nav-item .nav-link:focus {
+    color: #333;
+  }

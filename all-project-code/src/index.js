@@ -57,15 +57,17 @@ app.get("/register", (req, res) => {
 
 // Register ---------------------
 app.post('/register', async (req, res) => {
+
+  const { first_name, last_name, email, password, username } = req.body;
+  if (!first_name || !last_name || !email || !password || !username) {
+    return res.status(400).send('First name, last name, email, password, and username are required');
+  }
+
   //hash the password using bcrypt library
   const hash_password =  await bcrypt.hash(req.body.password, 10);
 
   const query1 = `select * from users where users.username = '${req.body.username}';`;
-
-  const input_password = req.body.password;
-  const input_username = req.body.username;
-  const query = `INSERT INTO users (password_hash, username, email, first_name, last_name) VALUES ('${hash_password}', '${input_username}', '${req.body.email}', '${req.body.first_name}', '${req.body.last_name}') returning *;`;
-
+  const query = `INSERT INTO users (password_hash, username, email, first_name, last_name) VALUES ('${hash_password}', '${username}', '${email}', '${first_name}', '${last_name}') RETURNING *;`;
   //console.log("Input password:", hash_password);
   //console.log("Input username:", input_username);
 
@@ -140,11 +142,11 @@ app.get('/business', (req, res) => {
     res.render('pages/home');
   });
 
+  app.get('/logout', (req, res) =>{
+    req.session.destroy();
+    res.json({ message: 'Logged out successfully' });
+  });
 
-
-// *****************************************************
-// <!-- Section 5 : Start Server-->
-// *****************************************************
 // starting the server and keeping the connection open to listen for more requests
 app.listen(3000);
 console.log('Server is listening on port 3000');
