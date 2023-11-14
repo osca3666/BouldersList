@@ -1,21 +1,24 @@
-.navbar {
-    background-color: #f8f9fa;
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
-  }
-  
-  .navbar .navbar-brand img {
-    height: 40px;
-  }
-  
-  .navbar .dropdown-menu {
-    right: 0;
-  }
-  
-  .navbar .nav-item .nav-link {
-    color: #555;
-  }
-  
-  .navbar .nav-item .nav-link:hover,
-  .navbar .nav-item .nav-link:focus {
-    color: #333;
-  }
+.user-info-box {
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between; 
+}
+
+.profile-picture {
+  width: 100px;
+  height: 100px; 
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 20px;
+}
+
+.order-summary-box {
+  background-color: #ffffff;
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  margin-left: 150px;
+}

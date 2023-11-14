@@ -142,10 +142,20 @@ app.get('/business', (req, res) => {
     res.render('pages/home');
   });
 
+  app.get('/user-agreement', (req, res) => {
+    res.render('user-agreement');
+  });
+
+  app.get('/profile', (req,res) => {
+    //profile
+    res.render('pages/profile');
+  });
+
   app.get('/logout', (req, res) =>{
     req.session.destroy();
     res.json({ message: 'Logged out successfully' });
   });
+  
 
 // starting the server and keeping the connection open to listen for more requests
 app.listen(3000);
