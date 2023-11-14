@@ -87,6 +87,9 @@ app.get('/business', (req, res) => {
     res.render('pages/business')
   });
 
+  app.get('/home', (req,res) => {
+    res.render('pages/home');
+  });
 
 
 
