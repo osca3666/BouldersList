@@ -1,0 +1,60 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<main>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4">
+        <h4>Filter by Service Type</h4>
+        <div class="list-group">
+          <% /* Replace with your actual filter names */ %>
+          <% ['Free Quote', 'Same Day', 'Indoor'].forEach(function(filter) { %>
+            <label class="list-group-item">
+              <input class="form-check-input me-1" type="checkbox" value="">
+              <%- filter %>
+            </label>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- Service cards column (8 spaces) -->
+    <div class="col-md-8">
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+<!--         <% if (services.length > 0) { %>
+          <% services.forEach(function(service) { %>
+            <div class="col">
+              <div class="card h-100">
+                <img src="<%- service.image_url %>" class="card-img-top" alt="<%- service.name %>">
+                <div class="card-body">
+                  <h5 class="card-title"><%- service.name %></h5>
+                  <p class="card-text"><%- service.description %></p>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">Rating: <%- service.rating %> stars</small>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %> -->
+          <% for(let i = 0; i < 10; i++) { %>
+            <div class="col">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Service Name</h5>
+                  <p class="card-text">Service description ldsfjldsjf dsfj sdjf dsf dsjf dsf </p>
+                </div>
+                <div class="card-footer">
+                  <small class="text-muted">Rating: ☆☆☆☆☆</small>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+        
+    </div>
+  </div>
+</main>
+
+<%- include ('../partials/footer') %>
