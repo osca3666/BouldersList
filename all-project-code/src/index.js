@@ -140,7 +140,9 @@ app.get('/business', (req, res) => {
     res.render('pages/home');
   });
 
-
+app.get('/discover',(req, res) => {
+    res.render('pages/discover');
+});
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->
