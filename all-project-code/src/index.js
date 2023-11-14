@@ -144,7 +144,7 @@ app.get('/business', (req, res) => {
 
 
   app.get('/user-agreement', (req, res) => {
-    res.render('user-agreement');
+    res.render('pages/user-agreement');
   });
 
   app.get('/profile', (req,res) => {
@@ -157,7 +157,6 @@ app.get('/business', (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
   
-=======
 app.get('/discover',(req, res) => {
     res.render('pages/discover');
 });

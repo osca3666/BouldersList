@@ -1,22 +1,29 @@
-<%- include ('../partials/header') %>
-<%- include ('../partials/menu') %>
-<%- include ('../partials/message') %>
-
+<%- include('../partials/header') %>
+<%- include('../partials/menu') %>
+<%- include('../partials/message') %>
 
 <main>
   <div class="container">
-    <!-- THE REST OF YOUR HTML CODE GOES HERE -->
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" />
+    <h1>Welcome back! Please Log in.</h1>
+    <form action="/login" method="POST" class="login-form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
       
-        <label for="password">Password</label>
-        <input type="text" id="password" name="password" />
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
       
-        <input type="submit" value="Submit" />
-      </form>
+        <div class="form-group">
+            <input type="submit" value="Log in">
+        </div>
+    </form>
+    <p class="register-prompt">
+        Don't have an account? <a href="/register">Register here</a>.
+    </p>
   </div>
 </main>
 
-<%- include ('../partials/footer') %>
+<%- include('../partials/footer') %>
