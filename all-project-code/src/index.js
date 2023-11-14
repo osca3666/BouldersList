@@ -50,7 +50,7 @@ db.connect()
 // <!-- Section 3 : App Settings -->
 // *****************************************************
 
-app.use(express.static('all-project-code'));
+app.use(express.static('resources'));
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
@@ -80,6 +80,99 @@ app.use((req, res, next) => {
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+
+app.get("/", (req, res) => {
+  res.render("pages/register");
+});
+
+app.get("/register", (req, res) => {
+    res.render("pages/register");
+  });
+
+// Register ---------------------
+app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+  const hash_password =  await bcrypt.hash(req.body.password, 10);
+
+  const query1 = `select * from users where users.username = '${req.body.username}';`;
+
+  const input_password = req.body.password;
+  const input_username = req.body.username;
+  const query = `INSERT INTO users (password_hash, username, email, first_name, last_name) VALUES ('${hash_password}', '${input_username}', '${req.body.email}', '${req.body.first_name}', '${req.body.last_name}') returning *;`;
+
+  //console.log("Input password:", hash_password);
+  //console.log("Input username:", input_username);
+
+  db.any(query1)
+  .then((data) => {
+
+    console.log("Data rows: ",data);
+    if(data == false)
+    {
+      db.one(query)
+  .then((rows) => {
+
+    console.log("Register: ",rows);
+    res.redirect("/login");
+  })
+  .catch((err) => {
+      console.log(err);
+      res.redirect("/register");
+    });
+    }
+    else
+    {
+      const loginMessage = "User already exists";
+      res.render('pages/login', {message: loginMessage});
+    }
+
+  })
+  .catch((err) => {
+      console.log(err);
+      res.redirect("/register");
+});
+
+  
+});
+
+app.get('/login', (req, res) => {
+  res.render('pages/login');
+});
+
+app.post('/login', async (req, res) => {
+  try {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+
+    if (!user) {
+      return res.redirect('/register');
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      throw new Error('Incorrect username or password');
+    }
+
+    req.session.user = user;
+    await req.session.save();
+
+    res.redirect('/discover');
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).render('login', { error: 'Incorrect username or password or an internal error occurred' });
+  }
+});
+
+app.get('/business', (req, res) => {
+    res.render('pages/business')
+  });
+
+  app.get('/home', (req,res) => {
+    res.render('pages/home');
+  });
 
 app.get('/profile', (req,res) => {
   //profile
