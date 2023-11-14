@@ -35,4 +35,3 @@ CREATE TABLE category(
         description VARCHAR(200),
         service_id INTEGER
 );
-
