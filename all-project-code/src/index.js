@@ -47,6 +47,10 @@ app.use(
   })
 );
 
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+
 app.get("/", (req, res) => {
   res.render("pages/home");
 });
@@ -171,5 +175,5 @@ app.get('/discover',(req, res) => {
 
 
 // starting the server and keeping the connection open to listen for more requests
-app.listen(3000);
+module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');

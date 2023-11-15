@@ -21,6 +21,10 @@ services:
       - '3000:3000'
     volumes:
       - ./all-project-code/src:/home/node/app
-    command: 'npm start'
+    command: 'npm run testandrun'
+# This defines our volume(s), which will persist throughout startups.
+# If you want to get rid of a hanging volume, e.g. to test your database init,
+# run `docker-compose rm -v`. Note that this will remove ALL of your data, so
+# be extra sure you've made a stable backup somewhere.
 volumes:
   group-project:
