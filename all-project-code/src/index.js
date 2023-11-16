@@ -48,6 +48,14 @@ app.use(
   })
 );
 
+let user = {
+  password: undefined,
+  username: undefined,
+  id: undefined,
+  
+};
+
+
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -98,16 +106,16 @@ app.post('/login', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+    const user_local = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
 
-    if (!user) {
+    if (!user_local) {
       // User not found or incorrect password
       res.status(400).json({
         status: 'error',
         error: 'Incorrect username or password. If you do not have an account, please register.'
       });
     } else {
-      const match = await bcrypt.compare(password, user.password);
+      const match = await bcrypt.compare(password, user_local.password);
 
       if (!match) {
         // Password does not match
@@ -116,10 +124,16 @@ app.post('/login', async (req, res) => {
           error: 'Incorrect username or password. If you do not have an account, please register.'
         });
       } else {
+
+        user.username = user_local.username;
+        user.id = user_local.user_id;
+        user.password = user_local.password;
+
         res.status(200).json({
+
           status: 'success',
           message: 'Welcome!',
-          user: user  // Include the user data in the response if needed
+          user: user_local  // Include the user data in the response if needed
         });
       }
     }
@@ -161,6 +175,47 @@ app.get('/business', (req, res) => {
   
 app.get('/discover',(req, res) => {
     res.render('pages/discover');
+});
+
+
+app.post('/review',(req, res) => {
+
+  const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
+
+  if(req.body.rating < 1 || req.body.rating > 5)
+  {
+
+    res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
+
+
+
+  }
+  
+  db.any(query)
+  .then((data) => {
+  
+    const query1 = `INSERT into review (business_id, user_id, rating) values (${data[0].business_id}, ${user.id}, ${req.body.rating}) returning *;`;
+
+    db.any(query1)
+    .then((data) => {
+
+      res.redirect('/business', {message: "Successfully added review"});
+
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect('/business', {message: "Error occurred, failed to add review"});
+    });
+
+
+
+  })
+  .catch((err) => {
+    console.log(err);
+    res.redirect("/home");
+  });
+
+
 });
 
 
