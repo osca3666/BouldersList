@@ -173,6 +173,12 @@ app.get('/discover',(req, res) => {
     res.render('pages/discover');
 });
 
+app.get('/addbusiness',(req, res) => {
+  res.render('pages/addbusiness');
+});
+
+
+
 
 // starting the server and keeping the connection open to listen for more requests
 module.exports = app.listen(3000);
