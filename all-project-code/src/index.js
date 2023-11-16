@@ -5,7 +5,7 @@ app.use(express.static('public'));
 const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
-var bcrypt = require('bcryptjs'); //  To hash passwords
+var bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 
 // database configuration
@@ -81,7 +81,7 @@ app.post('/register', async (req, res) => {
     console.error(err);
     res.status(400).json({
       status: 'error',
-      message: 'Registration failed. Please try again.',
+      message: 'Registration failed. Username already exists.',
       error: err.message  // Include the error message in the response
     });
   }
