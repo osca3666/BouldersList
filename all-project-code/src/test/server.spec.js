@@ -31,38 +31,32 @@ describe('Server!', () => {
       });
   });
 
-  // ===========================================================================
-  // TO-DO: Part A Login unit test case
 
-  it('positive: /register and /login', async () => {
-    // Register a new user with a unique username
+  it('positive: /login - Login successful', async () => {
     const uniqueUsername = `TestUser_${Date.now()}`;
     const registrationResponse = await chai
       .request(server)
       .post('/register')
       .send({ username: uniqueUsername, password: 'test' });
 
-    // Assert successful registration
     expect(registrationResponse).to.have.status(200);
     expect(registrationResponse.body.status).to.equals('success');
     assert.strictEqual(registrationResponse.body.message, 'User registered successfully.');
 
-    // Attempt to log in with the registered user
     const loginResponse = await chai
       .request(server)
       .post('/login')
       .send({ username: uniqueUsername, password: 'test' });
 
-    // Assert successful login
     expect(loginResponse).to.have.status(200);
     expect(loginResponse.body.status).to.equals('success');
     assert.strictEqual(loginResponse.body.message, 'Welcome!');
 
-    // Cleanup: Delete the user after the test
+ 
     await dbt.none('DELETE FROM users WHERE username = $1', [uniqueUsername]);
   });
 
-  // Negative test for /login - User not found
+
   it('negative: /login - User not found', async () => {
     const nonExistentUsername = `NonExistentUser_${Date.now()}`;
     const response = await chai
@@ -74,7 +68,43 @@ describe('Server!', () => {
     expect(response.body.status).to.equals('error');
     assert.strictEqual(response.body.error, 'Incorrect username or password. If you do not have an account, please register.');
   });
+
+
+  it('positive: /register - Successful registration', async () => {
+    const uniqueUsername = `TestUser_${Date.now()}`;
+    const response = await chai
+      .request(server)
+      .post('/register')
+      .send({ username: uniqueUsername, password: 'test' });
+
+    expect(response).to.have.status(200);
+    expect(response.body.status).to.equals('success');
+    assert.strictEqual(response.body.message, 'User registered successfully.');
+
+
+    await dbt.none('DELETE FROM users WHERE username = $1', [uniqueUsername]);
+  });
+
+
+  it('negative: /register - Duplicate username', async () => {
+    const duplicateUsername = 'DuplicateUser';
+    // Register the user once
+    const firstRegistration = await chai
+      .request(server)
+      .post('/register')
+      .send({ username: duplicateUsername, password: 'password' });
+
+
+    const secondRegistration = await chai
+      .request(server)
+      .post('/register')
+      .send({ username: duplicateUsername, password: 'password' });
+
+    expect(secondRegistration).to.have.status(400);
+    expect(secondRegistration.body.status).to.equals('error');
+    assert.strictEqual(secondRegistration.body.message, 'Registration failed. Username already exists.');
+
+   
+    await dbt.none('DELETE FROM users WHERE username = $1', [duplicateUsername]);
+  });
 });
-
-
-

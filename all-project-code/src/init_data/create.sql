@@ -5,7 +5,6 @@ CREATE TABLE users(
  	password VARCHAR(255) NOT NULL
 );
 
-/*
 
 DROP TABLE IF EXISTS business CASCADE;
 CREATE TABLE business(
@@ -69,5 +68,5 @@ CREATE TABLE service_to_category(
     service_id INTEGER REFERENCES services(service_id),
     category_id INTEGER REFERENCES category(category_id)
 );
-*/
+
 
