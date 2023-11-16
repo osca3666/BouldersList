@@ -177,6 +177,12 @@ app.get('/discover',(req, res) => {
     res.render('pages/discover');
 });
 
+app.get('/addbusiness',(req, res) => {
+  res.render('pages/addbusiness');
+});
+
+
+
 
 app.post('/review',(req, res) => {
 
