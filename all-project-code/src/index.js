@@ -5,10 +5,11 @@ app.use(express.static('public'));
 const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
-const bcrypt = require('bcrypt'); //  To hash passwords
+var bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 
 // database configuration
+
 const dbConfig = {
   host: 'db', // the database server
   port: 5432, // the database port
@@ -61,55 +62,36 @@ app.get("/register", (req, res) => {
 
 // Register ---------------------
 app.post('/register', async (req, res) => {
+  try {
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const username = req.body.username;
 
-  const { first_name, last_name, email, password, username } = req.body;
-  if (!first_name || !last_name || !email || !password || !username) {
-    return res.status(400).send('First name, last name, email, password, and username are required');
-  }
+    const query = 'INSERT into users (username, password) values ($1, $2) returning *;';
+    const data = await db.one(query, [username, hash]);
 
-  //hash the password using bcrypt library
-  const hash_password =  await bcrypt.hash(password, 10);
+    console.log(data);
+    console.log("test");
 
-  const query1 = `select * from users where users.username = '${req.body.username}';`;
-  const query = `INSERT INTO users (password_hash, username, email, first_name, last_name) VALUES ('${hash_password}', '${username}', '${email}', '${first_name}', '${last_name}') RETURNING *;`;
-  //console.log("Input password:", hash_password);
-  //console.log("Input username:", input_username);
-
-  db.any(query1)
-  .then((data) => {
-
-    console.log("Data rows: ",data);
-    if(data.length == 0)
-    {
-      db.one(query)
-  .then((rows) => {
-
-    console.log("Register: ",rows);
-    res.redirect("/login");
-  })
-  .catch((err) => {
-      console.log(err);
-      res.redirect("/register");
+    res.status(200).json({
+      status: 'success',
+      message: 'User registered successfully.',
+      user: data  // Include the registered user data in the response if needed
     });
-    }
-    else
-    {
-      const loginMessage = "User already exists";
-      res.render('pages/login', {message: loginMessage});
-    }
-
-  })
-  .catch((err) => {
-      console.log(err);
-      res.redirect("/register");
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({
+      status: 'error',
+      message: 'Registration failed. Username already exists.',
+      error: err.message  // Include the error message in the response
+    });
+  }
 });
 
-  
-});
 
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
+
 
 app.post('/login', async (req, res) => {
   try {
@@ -120,30 +102,38 @@ app.post('/login', async (req, res) => {
 
     if (!user) {
       // User not found or incorrect password
-      res.render('pages/login', { 
+      res.status(400).json({
+        status: 'error',
         error: 'Incorrect username or password. If you do not have an account, please register.'
       });
     } else {
-      const match = await bcrypt.compare(password, user.password_hash);
+      const match = await bcrypt.compare(password, user.password);
+
       if (!match) {
         // Password does not match
-        res.render('pages/login', { 
+        res.status(400).json({
+          status: 'error',
           error: 'Incorrect username or password. If you do not have an account, please register.'
         });
       } else {
-        // Successful login
-        req.session.user = user;
-        await req.session.save();
-        res.redirect('/');
+        res.status(200).json({
+          status: 'success',
+          message: 'Welcome!',
+          user: user  // Include the user data in the response if needed
+        });
       }
     }
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).render('pages/login', { 
-      error: 'An internal error occurred. Please try again later.'
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message  // Include the error message in the response
     });
   }
 });
+
+
 
 
 app.get('/business', (req, res) => {
