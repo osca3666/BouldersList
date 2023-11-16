@@ -194,7 +194,7 @@ app.post('/review',(req, res) => {
   db.any(query)
   .then((data) => {
   
-    const query1 = `INSERT into review (business_id, user_id, rating) values (${data[0].business_id}, ${user.id}, ${req.body.rating}) returning *;`;
+    const query1 = `INSERT into review (business_id, user_id, rating, review_test) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
 
     db.any(query1)
     .then((data) => {
