@@ -164,6 +164,10 @@ app.get('/business', (req, res) => {
     res.render('pages/profile');
   });
 
+  app.get('/submit-review', (req,res) => {
+    res.render('pages/submit-review')
+  });
+
   app.get('/logout', (req, res) =>{
     req.session.destroy();
     res.json({ message: 'Logged out successfully' });

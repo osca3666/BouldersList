@@ -1,0 +1,36 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+
+<main>
+    <div class="container">
+      <% if (locals.message) { %>
+        <div class="alert alert-<%- locals.error ? 'danger' : 'success' %>" role="alert">
+          <%= locals.message %>
+        </div>
+      <% } %>
+      <form action="/submit-review" method="post"> 
+        <label for="name">Name:</label> 
+        <input type="text" id="name" name="name" required> 
+        <br> 
+        <label for="email">Email:</label> 
+        <input type="email" id="email" name="email" required> 
+        <br> 
+        <div id='rating'>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <br>
+        <label for="review">Review:</label> 
+        <textarea id="data" cols="40" rows="5" name="message" onkeyup="countChars(this);"></textarea>
+        <p id="charNum">200 characters remaining</p> 
+        <br>
+        <input type="submit" value="Submit Review"> 
+    </form>
+    </div>
+  </main>
+
+<%- include ('../partials/footer') %>

@@ -56,7 +56,8 @@ CREATE TABLE review(
     	review_id SERIAL PRIMARY KEY,
     	business_id INT REFERENCES business(business_id),
         user_id INT REFERENCES users(user_id),
-		rating INT CHECK (rating >= 1 AND rating <= 5)
+		rating INT CHECK (rating >= 1 AND rating <= 5),
+		review_text VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS business_to_service CASCADE;

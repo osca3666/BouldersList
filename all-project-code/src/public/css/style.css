@@ -22,3 +22,31 @@
   border-radius: 5px;
   margin-left: 150px;
 }
+
+.review {
+  border: 1px solid #ccc; 
+  padding: 10px; 
+  margin-bottom: 20px;
+}
+
+#rating { 
+  font-size: 0;
+}
+
+#rating span {
+  font-size: 40px;
+}
+
+#rating span::before { 
+  content: "☆";
+}
+
+#rating span.active::before {
+  content: "★";
+  color: orange;
+}
+
+#rating span:hover { 
+  cursor: pointer;
+}
+
