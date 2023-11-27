@@ -163,9 +163,58 @@ app.get('/business', (req, res) => {
     res.render('pages/user-agreement');
   });
 
-  app.get('/profile', (req,res) => {
-    //profile
-    res.render('pages/profile');
+
+
+app.post('/place-order', async (req, res) => {
+  try {
+    // retrieve order items from the request
+    const orderItems = req.body.orderItems;
+
+    // calculate total from order items
+    let total = 0;
+    for (const item of orderItems) {
+      const servicePayment = await db.one('SELECT payment_amount FROM payments WHERE service_id = $1', [item.service_id]);
+      total = servicePayment.payment_amount;
+    }
+
+    //insert order details
+    const orderQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
+    const orderInsertResult = await db.one(orderQuery, [user.id, total, 'Pending']);
+
+    // insert order items
+    const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
+    for (const item of orderItems) {
+      const servicePayment = await db.one('SELECT payment_amount FROM payments WHERE service_id = $1', [item.service_id]);
+      const itemTotal = item.quantity * servicePayment.payment_amount;
+
+      await db.none(orderItemsQuery, [orderInsertResult.order_id, item.service_id, item.quantity, itemTotal]);
+    }
+
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Order placed successfully.',
+      order: orderInsertResult,
+    });
+  } catch (error) {
+    console.error('Error placing order:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });
+  }
+});
+
+
+
+
+  app.get('/submit-review', (req,res) => {
+    res.render('pages/submit-review')
+  });
+
+  app.get('/submit-review', (req,res) => {
+    res.render('pages/submit-review')
   });
 
   app.get('/logout', (req, res) =>{
@@ -182,7 +231,29 @@ app.get('/addbusiness',(req, res) => {
 });
 
 
+ app.get('/profile', async (req, res) => {
+  try {
+    const orderDetailsQuery = 'SELECT * FROM order_details WHERE user_id = $1;';
+    const orderDetails = await db.any(orderDetailsQuery, [user.id]);
 
+    console.log('Order Details:', orderDetails);
+
+    const orderItemsQuery = 'SELECT * FROM order_items WHERE order_id = $1;';
+    for (const order of orderDetails) {
+      order.items = await db.any(orderItemsQuery, [order.order_id]);
+      console.log(`Order Items for Order ID ${order.order_id}:`, order.items);
+    }
+
+    res.render('pages/profile', { orders: orderDetails });
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });
+  }
+});
 
 app.post('/review',(req, res) => {
 

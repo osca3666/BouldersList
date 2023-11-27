@@ -33,13 +33,15 @@ CREATE TABLE payments(
 
 DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
-   	order_id SERIAL PRIMARY KEY, 
+    order_id SERIAL PRIMARY KEY, 
     user_id INTEGER REFERENCES users(user_id),
-	payment_id INTEGER REFERENCES payments(payment_id),
+    payment_id INTEGER REFERENCES payments(payment_id),
     total DECIMAL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'Pending'
 );
+
 
 DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category(
@@ -54,7 +56,8 @@ CREATE TABLE review(
     	review_id SERIAL PRIMARY KEY,
     	business_id INT REFERENCES business(business_id),
         user_id INT REFERENCES users(user_id),
-		rating INT CHECK (rating >= 1 AND rating <= 5)
+		rating INT CHECK (rating >= 1 AND rating <= 5),
+		review_text VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS business_to_service CASCADE;
@@ -68,5 +71,14 @@ CREATE TABLE service_to_category(
     service_id INTEGER REFERENCES services(service_id),
     category_id INTEGER REFERENCES category(category_id)
 );
+
+CREATE TABLE order_items (
+  order_item_id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES order_details(order_id),
+  service_id INTEGER REFERENCES services(service_id),
+  quantity INTEGER,
+  total DECIMAL
+);
+
 
 
