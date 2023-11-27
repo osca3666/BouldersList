@@ -178,6 +178,7 @@ app.get('/business', (req, res) => {
   });
   
   app.get('/discover', (req, res) => {
+    const serviceType = req.query.type || 'service';
     axios({
       url: `https://local-business-data.p.rapidapi.com/search`,
       method: 'GET',
@@ -188,11 +189,11 @@ app.get('/business', (req, res) => {
       },
       params: {
         //apikey: process.env.API_KEY,
-        query: 'pizza',
+        query: '${serviceType} in Boulder, Colorado',
         lat: '40.0150',
-        lng: '105.2705',
+        lng: '-105.2705',
         zoom: '10',
-        limit: '2',
+        limit: '4',
         language: 'en',
         region: 'us'
       },
