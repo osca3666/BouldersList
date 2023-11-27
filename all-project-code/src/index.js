@@ -48,6 +48,14 @@ app.use(
   })
 );
 
+let user = {
+  password: undefined,
+  username: undefined,
+  id: undefined,
+  
+};
+
+
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -98,16 +106,16 @@ app.post('/login', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+    const user_local = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
 
-    if (!user) {
+    if (!user_local) {
       // User not found or incorrect password
       res.status(400).json({
         status: 'error',
         error: 'Incorrect username or password. If you do not have an account, please register.'
       });
     } else {
-      const match = await bcrypt.compare(password, user.password);
+      const match = await bcrypt.compare(password, user_local.password);
 
       if (!match) {
         // Password does not match
@@ -116,10 +124,16 @@ app.post('/login', async (req, res) => {
           error: 'Incorrect username or password. If you do not have an account, please register.'
         });
       } else {
+
+        user.username = user_local.username;
+        user.id = user_local.user_id;
+        user.password = user_local.password;
+
         res.status(200).json({
+
           status: 'success',
           message: 'Welcome!',
-          user: user  // Include the user data in the response if needed
+          user: user_local  // Include the user data in the response if needed
         });
       }
     }
@@ -149,9 +163,54 @@ app.get('/business', (req, res) => {
     res.render('pages/user-agreement');
   });
 
-  app.get('/profile', (req,res) => {
-    //profile
-    res.render('pages/profile');
+
+
+app.post('/place-order', async (req, res) => {
+  try {
+    // retrieve order items from the request
+    const orderItems = req.body.orderItems;
+
+    // calculate total from order items
+    let total = 0;
+    for (const item of orderItems) {
+      const servicePayment = await db.one('SELECT payment_amount FROM payments WHERE service_id = $1', [item.service_id]);
+      total = servicePayment.payment_amount;
+    }
+
+    //insert order details
+    const orderQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
+    const orderInsertResult = await db.one(orderQuery, [user.id, total, 'Pending']);
+
+    // insert order items
+    const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
+    for (const item of orderItems) {
+      const servicePayment = await db.one('SELECT payment_amount FROM payments WHERE service_id = $1', [item.service_id]);
+      const itemTotal = item.quantity * servicePayment.payment_amount;
+
+      await db.none(orderItemsQuery, [orderInsertResult.order_id, item.service_id, item.quantity, itemTotal]);
+    }
+
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Order placed successfully.',
+      order: orderInsertResult,
+    });
+  } catch (error) {
+    console.error('Error placing order:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });
+  }
+});
+
+
+
+
+  app.get('/submit-review', (req,res) => {
+    res.render('pages/submit-review')
   });
 
   app.get('/logout', (req, res) =>{
@@ -161,6 +220,77 @@ app.get('/business', (req, res) => {
   
 app.get('/discover',(req, res) => {
     res.render('pages/discover');
+});
+
+app.get('/addbusiness',(req, res) => {
+  res.render('pages/addbusiness');
+});
+
+
+ app.get('/profile', async (req, res) => {
+  try {
+    const orderDetailsQuery = 'SELECT * FROM order_details WHERE user_id = $1;';
+    const orderDetails = await db.any(orderDetailsQuery, [user.id]);
+
+    console.log('Order Details:', orderDetails);
+
+    const orderItemsQuery = 'SELECT * FROM order_items WHERE order_id = $1;';
+    for (const order of orderDetails) {
+      order.items = await db.any(orderItemsQuery, [order.order_id]);
+      console.log(`Order Items for Order ID ${order.order_id}:`, order.items);
+    }
+
+    res.render('pages/profile', { orders: orderDetails });
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });
+  }
+});
+
+
+
+app.post('/review',(req, res) => {
+
+  const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
+
+  if(req.body.rating < 1 || req.body.rating > 5)
+  {
+
+    res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
+
+
+
+  }
+  
+  db.any(query)
+  .then((data) => {
+  
+    const query1 = `INSERT into review (business_id, user_id, rating, review_test) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
+
+    db.any(query1)
+    .then((data) => {
+
+      res.redirect('/business', {message: "Successfully added review"});
+
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect('/business', {message: "Error occurred, failed to add review"});
+    });
+
+
+
+  })
+  .catch((err) => {
+    console.log(err);
+    res.redirect("/home");
+  });
+
+
 });
 
 
