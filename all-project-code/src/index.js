@@ -177,29 +177,6 @@ app.get('/business', (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
   
-app.get('/business', (req, res) => {
-    res.render('pages/business')
-  });
-
-app.get('/home', (req,res) => {
-    res.render('pages/home');
-  });
-
-
-  app.get('/user-agreement', (req, res) => {
-    res.render('pages/user-agreement');
-  });
-
-  app.get('/profile', (req,res) => {
-    //profile
-    res.render('pages/profile');
-  });
-
-  app.get('/logout', (req, res) =>{
-    req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
-  });
-
   app.get('/discover', (req, res) => {
     axios({
       url: `https://local-business-data.p.rapidapi.com/search`,
