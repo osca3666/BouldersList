@@ -213,6 +213,10 @@ app.post('/place-order', async (req, res) => {
     res.render('pages/submit-review')
   });
 
+  app.get('/submit-review', (req,res) => {
+    res.render('pages/submit-review')
+  });
+
   app.get('/logout', (req, res) =>{
     req.session.destroy();
     res.json({ message: 'Logged out successfully' });
@@ -250,8 +254,6 @@ app.get('/addbusiness',(req, res) => {
     });
   }
 });
-
-
 
 app.post('/review',(req, res) => {
 
