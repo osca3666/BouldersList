@@ -17,26 +17,30 @@
       </div>
 
       <!-- Service cards column (8 spaces) -->
-    <div class="col-md-8">
-      <div class="row row-cols-1 row-cols-md-2 g-4">
-          <% for(let i = 0; i < 10; i++) { %>
+      <div class="col-md-8">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+          <% events.forEach(function(event) { %>
             <div class="col">
-              <div class="card h-100">
+              <div class="card h-100" data-id="<%- event.business_id %>">
+                <!-- Display first photo, ensure your API returns an array even if it's one photo -->
+                <% if(event.photos_sample && event.photos_sample.length > 0) { %>
+                <img src="<%- event.photos_sample[0] %>" class="card-img-top" alt="<%- event.name %>">
+                <% } %>
                 <div class="card-body">
-                  <h5 class="card-title">Service Name</h5>
-                  <p class="card-text">Service description ldsfjldsjf dsfj sdjf dsf dsjf dsf </p>
+                  <h5 class="card-title"><%- event.name %></h5>
+                  <p class="card-text">Rating: <%- event.rating %> | Reviews: <%- event.review_count %></p>
                 </div>
                 <div class="card-footer">
-                  <small class="text-muted">Rating: ☆☆☆☆☆</small>
+                  <small class="text-muted"><%- event.full_address %></small>
                 </div>
               </div>
             </div>
-          <% } %>
+          <% }); %>
+        </div>
       </div>
-    </div>
-        
     </div>
   </div>
 </main>
 
 <%- include ('../partials/footer') %>
+<script src="/js/script.js"></script>
