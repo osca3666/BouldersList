@@ -177,9 +177,59 @@ app.get('/business', (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
   
-app.get('/discover',(req, res) => {
-    res.render('pages/discover');
-});
+app.get('/business', (req, res) => {
+    res.render('pages/business')
+  });
+
+app.get('/home', (req,res) => {
+    res.render('pages/home');
+  });
+
+
+  app.get('/user-agreement', (req, res) => {
+    res.render('pages/user-agreement');
+  });
+
+  app.get('/profile', (req,res) => {
+    //profile
+    res.render('pages/profile');
+  });
+
+  app.get('/logout', (req, res) =>{
+    req.session.destroy();
+    res.json({ message: 'Logged out successfully' });
+  });
+
+  app.get('/discover', (req, res) => {
+    axios({
+      url: `https://local-business-data.p.rapidapi.com/search`,
+      method: 'GET',
+      dataType: 'json',
+      headers: {
+        'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
+        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+      },
+      params: {
+        //apikey: process.env.API_KEY,
+        query: 'pizza',
+        lat: '40.0150',
+        lng: '105.2705',
+        zoom: '10',
+        limit: '2',
+        language: 'en',
+        region: 'us'
+      },
+    })
+      .then(results => {
+      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+      res.render('pages/discover', {events : results.data.data});
+      })
+      .catch((err) => {
+      // Handle errors
+      console.log(err);
+      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
+      });
+  });
 
 app.get('/addbusiness',(req, res) => {
   res.render('pages/addbusiness');
