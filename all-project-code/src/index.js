@@ -185,9 +185,54 @@ app.post('/add-service', async (req, res) => {
 });
 
 
-app.get('/business', (req, res) => {
-    res.render('pages/business')
-  });
+app.get('/business-profile/:id', async (req, res) => {
+
+  const query = 'SELECT * FROM services';
+  db.any(query)
+    .then((service) => {
+      res.render('pages/business', {service});
+    });
+  const b_id = req.params.id;
+  /*const options = {
+    method: 'GET',
+    url: 'https://local-business-data.p.rapidapi.com/business-details',
+    params: {
+      business_id: b_id,
+      extract_emails_and_contacts: 'true',
+      extract_share_link: 'false',
+      region: 'us',
+      language: 'en'
+    },
+    headers: {
+      'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
+      'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const results = await axios.request(options);
+    console.log(results.data);
+    res.render('pages/business', {results, serv});
+  } catch(error) {
+    console.log(error);
+    res.render('pages/business', { events: [], error: 'Failed to fetch local businesses' });
+  }*/
+});
+
+app.get('/service/:id', (req, res) => {
+
+  const s_id = req.params.id;
+  const query = 'SELECT * FROM services WHERE service_id = $1';
+  db.one(query, [s_id])
+    .then((data) => {
+      console.log(data);
+      res.render('pages/service', {data});
+    })
+    .catch((err) => {
+      console.log(err);
+      res.render('pages/service');
+    });
+});
 
   app.get('/home', (req,res) => {
     res.render('pages/home');
