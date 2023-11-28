@@ -4,7 +4,7 @@
 <main>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-3">
         <h4>Filter by Service Type</h4>
         <div class="list-group">
           <% ['Free Quote', 'Same Day', 'Indoor'].forEach(function(filter) { %>
@@ -17,7 +17,7 @@
       </div>
 
       <!-- Service cards column (8 spaces) -->
-      <div class="col-md-8">
+      <div class="col-md-9">
         <div class="row row-cols-1 row-cols-md-2 g-4">
           <% events.forEach(function(event) { %>
             <div class="col">
@@ -33,6 +33,13 @@
                 <div class="card-footer">
                   <small class="text-muted"><%- event.full_address %></small>
                 </div>
+		
+		       <!-- Add to Profile Form -->
+       <form action="/add-to-profile" method="post">
+         <input type="hidden" name="serviceId" value="<%- event.business_id %>">
+         <button type="submit" class="btn btn-primary">Order</button>
+        </form>
+
               </div>
             </div>
           <% }); %>
