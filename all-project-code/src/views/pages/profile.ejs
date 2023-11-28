@@ -26,23 +26,26 @@
   <section class="mt-4">
     <h2>My Orders</h2>
     <table class="table">
-      <tr>
-        <th>Order ID</th>
-        <th>Total</th>
-        <th>Payment ID</th>
-        <th>Created At</th>
-        <th>Status</th>
-      </tr>
-      <tr>
-        <td>123243521</td>
-        <td>$147.28</td>
-        <td>45242</td>
-        <td>11/10/23</td>
-        <td>Shipped</td>
-      </tr>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Total</th>
+          <th>Created At</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const order of orders) { %>
+          <tr>
+            <td><%= order.order_id %></td>
+            <td>$<%= order.total %></td>
+            <td><%= order.created_at %></td>
+            <td><%= order.status %></td>
+          </tr>
+        <% } %>
+      </tbody>
     </table>
   </section>
 </div>
-
 
 <%- include ('../partials/footer') %>
