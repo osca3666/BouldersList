@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOMContentLoaded event fired');
   // Add event listeners to all cards
-  const cards = document.querySelectorAll('.card');
+  const cards = document.querySelectorAll('div.card.h-100');
   cards.forEach(card => {
     card.addEventListener('click', function() {
       // Use the data-id attribute to fetch more details or navigate

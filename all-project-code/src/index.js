@@ -60,9 +60,23 @@ app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
-app.get("/", (req, res) => {
-  res.render("pages/home");
+app.get("/", async (req, res) => {
+    try {
+        // Fetch service data from the database
+        const servicesData = await db.any('SELECT * FROM services');
+
+        // Render the home template with the service data
+        res.render("pages/home", { servicesData });
+    } catch (error) {
+        console.error('Error fetching service data:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'An internal error occurred. Please try again later.',
+            error: error.message,
+        });
+    }
 });
+
 
 app.get("/register", (req, res) => {
     res.render("pages/register");
@@ -148,6 +162,28 @@ app.post('/login', async (req, res) => {
 });
 
 
+app.post('/add-service', async (req, res) => {
+  try {
+    const { serviceName, serviceDescription, serviceCost } = req.body;
+
+    // Insert the new service into the services table
+    const insertServiceQuery = 'INSERT INTO services (name, description, cost) VALUES ($1, $2, $3) RETURNING *;';
+    const insertedService = await db.one(insertServiceQuery, [serviceName, serviceDescription, serviceCost]);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Service added successfully.',
+      service: insertedService,
+    });
+  } catch (error) {
+    console.error('Error adding service:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });
+  }
+});
 
 
 app.get('/business', (req, res) => {
@@ -167,29 +203,37 @@ app.get('/business', (req, res) => {
 
 app.post('/place-order', async (req, res) => {
   try {
-    // retrieve order items from the request
-    const orderItems = req.body.orderItems;
+    const { service_id, quantity } = req.body;
 
-    // calculate total from order items
-    let total = 0;
-    for (const item of orderItems) {
-      const servicePayment = await db.one('SELECT payment_amount FROM payments WHERE service_id = $1', [item.service_id]);
-      total = servicePayment.payment_amount;
+    // Fetch service details based on service_id
+    const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
+
+    // If the service does not exist, insert it
+    if (!serviceDetails) {
+      const { name, description, cost, logo_url, img_url } = req.body; // Adjust this based on your frontend form
+
+      // Insert the service into the services table
+      const insertServiceQuery = 'INSERT INTO services (name, description, cost, logo_url, img_url) VALUES ($1, $2, $3, $4, $5) RETURNING service_id;';
+      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost, logo_url, img_url]);
+
+      // Update serviceDetails with the newly inserted service
+      serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
     }
 
-    //insert order details
-    const orderQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
-    const orderInsertResult = await db.one(orderQuery, [user.id, total, 'Pending']);
+    console.log('Quantity:', quantity);
+    console.log('Service Cost:', serviceDetails.cost);
 
-    // insert order items
+    // Calculate total based on quantity and service cost
+    const total = quantity * serviceDetails.cost;
+
+    // Insert order details
+    const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
+    const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
+
+    // Insert order items
     const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
-    for (const item of orderItems) {
-      const servicePayment = await db.one('SELECT payment_amount FROM payments WHERE service_id = $1', [item.service_id]);
-      const itemTotal = item.quantity * servicePayment.payment_amount;
-
-      await db.none(orderItemsQuery, [orderInsertResult.order_id, item.service_id, item.quantity, itemTotal]);
-    }
-
+    const itemTotal = quantity * serviceDetails.cost;
+    await db.none(orderItemsQuery, [orderInsertResult.order_id, serviceDetails.service_id, quantity, itemTotal]);
 
     res.status(200).json({
       status: 'success',
@@ -207,8 +251,6 @@ app.post('/place-order', async (req, res) => {
 });
 
 
-
-
   app.get('/submit-review', (req,res) => {
     res.render('pages/submit-review')
   });
@@ -222,37 +264,9 @@ app.post('/place-order', async (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
   
-  app.get('/discover', (req, res) => {
-    const serviceType = req.query.type || 'service';
-    axios({
-      url: `https://local-business-data.p.rapidapi.com/search`,
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
-        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
-      },
-      params: {
-        //apikey: process.env.API_KEY,
-        query: '${serviceType} in Boulder, Colorado',
-        lat: '40.0150',
-        lng: '-105.2705',
-        zoom: '10',
-        limit: '4',
-        language: 'en',
-        region: 'us'
-      },
-    })
-      .then(results => {
-      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
-      res.render('pages/discover', {events : results.data.data});
-      })
-      .catch((err) => {
-      // Handle errors
-      console.log(err);
-      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
-      });
-  });
+app.get('/discover',(req, res) => {
+    res.render('pages/discover');
+});
 
 app.get('/addbusiness',(req, res) => {
   res.render('pages/addbusiness');
