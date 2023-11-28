@@ -92,12 +92,7 @@ app.post('/register', async (req, res) => {
 
     console.log(data);
     console.log("test");
-
-    res.status(200).json({
-      status: 'success',
-      message: 'User registered successfully.',
-      user: data  // Include the registered user data in the response if needed
-    });
+    res.redirect('/login');
   } catch (err) {
     console.error(err);
     res.status(400).json({
@@ -138,16 +133,8 @@ app.post('/login', async (req, res) => {
         });
       } else {
 
-        user.username = user_local.username;
-        user.id = user_local.user_id;
-        user.password = user_local.password;
-
-        res.status(200).json({
-
-          status: 'success',
-          message: 'Welcome!',
-          user: user_local  // Include the user data in the response if needed
-        });
+        req.session.user = { id: user_local.user_id, username: user_local.username, password: user_local.password};
+        return res.redirect('/');
       }
     }
   } catch (error) {
@@ -160,6 +147,17 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Authentication Middleware.
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    // Default to login page.
+    return res.redirect('/login');
+  }
+  next();
+};
+
+// Authentication Required
+app.use(auth);
 
 app.post('/add-service', async (req, res) => {
   try {
@@ -186,12 +184,24 @@ app.post('/add-service', async (req, res) => {
 
 
 app.get('/business-profile/:id', async (req, res) => {
-
-  const query = 'SELECT * FROM services';
-  db.any(query)
-    .then((service) => {
-      res.render('pages/business', {service});
+  try{
+    const serviceQuery = 'SELECT * FROM services';
+    const services = await db.any(serviceQuery);
+    const reviewsQuery = 'SELECT * FROM reviews WHERE business_id = $1';
+    const reviews = await db.any(reviewsQuery, [b_id]);
+    res.render('pages/business', {
+      service: services,
+      reviews: reviews
     });
+  }catch (error) {
+    console.error(error);
+    // Handle errors
+    res.render('pages/business', {
+      service: [],
+      reviews: [],
+      error: 'Failed to fetch data'
+    });
+  }
   const b_id = req.params.id;
   /*const options = {
     method: 'GET',
@@ -369,7 +379,7 @@ app.get('/addbusiness',(req, res) => {
   }
 });
 
-app.post('/review',(req, res) => {
+app.post('/submit_review', (req, res) => {
 
   const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
 
@@ -424,6 +434,36 @@ app.get('/category/2', (req,res) => {
 app.get('/category/3', (req,res) => {
   res.render('pages/lawnandgarden')
 });
+
+app.get('/get_reviews', (req, res) => {
+  const query = `SELECT r.*, u.username FROM review r INNER JOIN users u ON r.user_id = u.user_id`;
+
+  db.any(query)
+      .then((data) => {
+          // Send the data back to the client
+          res.json(data);
+      })
+      .catch((err) => {
+          console.log(err);
+          res.status(500).send("Error occurred, failed to fetch reviews");
+      });
+});
+
+
+app.get('/get_ratings', (req, res) => {
+  const query = `SELECT rating FROM review WHERE rating BETWEEN 1 AND 5`;
+
+  db.any(query)
+      .then((data) => {
+          res.json(data);
+      })
+      .catch((err) => {
+          console.log(err);
+          res.status(500).send("Error occurred, failed to fetch ratings");
+      });
+});
+
+
 
 
 // starting the server and keeping the connection open to listen for more requests
