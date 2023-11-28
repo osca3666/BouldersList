@@ -1,0 +1,43 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+<%- include ('../partials/message') %>
+
+<div class="container text-center">
+    <h1><%=data.name%></h1>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="text-justify">
+                <h4>Description</h4>
+                <p><%=data.description%></p>
+            </div>
+            <div class="text-justify">
+                <h4>Cost</h4>
+                <p>$<%=data.cost%> per hour</p>
+            </div>
+            <div class="text-justify">
+                <button class="btn-lg">Book Now</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+        <img src="<%=data.logo_url%>" alt="Service Logo" width="450" height="300">
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-4">
+        <h4>Pictures ------------- (make into slideshow format - website lab projects)</h4>
+    </div>
+    <div>
+        <% for (var i = 0; i < data.img_url.length; i++) {%>
+            <div class="row">
+                <img src="<%=data.img_url[i]%>" class="img-fluid rounded-start" alt="...">
+            </div>
+        <% } %>
+    </div>
+</div>
+<br>
+<br>
+<%- include ('../partials/footer') %>
