@@ -193,7 +193,7 @@ app.get('/business-profile/:id', async (req, res) => {
     res.render('pages/business', {
       service: services,
       reviews: reviews,
-      businessId: businessId
+      businessId: b_id
     });
     console.log(services);
   }catch (error) {
@@ -412,7 +412,7 @@ app.post('/submit-review', (req, res) => {
   })
   .catch((err) => {
     console.log(err);
-    res.redirect("/");
+    res.redirect('/business-profile/:id');
   });
 
 
