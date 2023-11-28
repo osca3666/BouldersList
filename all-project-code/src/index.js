@@ -184,7 +184,7 @@ app.get('/business', (req, res) => {
       method: 'GET',
       dataType: 'json',
       headers: {
-        'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
+        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
         'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
       },
       params: {
