@@ -93,12 +93,7 @@ app.post('/register', async (req, res) => {
 
     console.log(data);
     console.log("test");
-
-    res.status(200).json({
-      status: 'success',
-      message: 'User registered successfully.',
-      user: data  // Include the registered user data in the response if needed
-    });
+    res.redirect('/login');
   } catch (err) {
     console.error(err);
     res.status(400).json({
@@ -139,16 +134,8 @@ app.post('/login', async (req, res) => {
         });
       } else {
 
-        user.username = user_local.username;
-        user.id = user_local.user_id;
-        user.password = user_local.password;
-
-        res.status(200).json({
-
-          status: 'success',
-          message: 'Welcome!',
-          user: user_local  // Include the user data in the response if needed
-        });
+        req.session.user = { id: user_local.user_id, username: user_local.username, password: user_local.password};
+        return res.redirect('/');
       }
     }
   } catch (error) {
