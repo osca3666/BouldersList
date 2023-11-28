@@ -172,6 +172,7 @@ const auth = (req, res, next) => {
 
 // Authentication Required
 app.use(auth);
+
 app.post('/add-service', async (req, res) => {
   try {
     const { serviceName, serviceDescription, serviceCost } = req.body;
