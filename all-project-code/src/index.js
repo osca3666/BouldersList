@@ -339,7 +339,7 @@ app.get('/profile', async (req, res) => {
   }
 });
 
-app.post('/review', (req, res) => {
+app.post('/submit_review', (req, res) => {
 
   const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
 
@@ -373,6 +373,36 @@ app.post('/review', (req, res) => {
 
 
 });
+
+app.get('/get_reviews', (req, res) => {
+  const query = `SELECT r.*, u.username FROM review r INNER JOIN users u ON r.user_id = u.user_id`;
+
+  db.any(query)
+      .then((data) => {
+          // Send the data back to the client
+          res.json(data);
+      })
+      .catch((err) => {
+          console.log(err);
+          res.status(500).send("Error occurred, failed to fetch reviews");
+      });
+});
+
+
+app.get('/get_ratings', (req, res) => {
+  const query = `SELECT rating FROM review WHERE rating BETWEEN 1 AND 5`;
+
+  db.any(query)
+      .then((data) => {
+          res.json(data);
+      })
+      .catch((err) => {
+          console.log(err);
+          res.status(500).send("Error occurred, failed to fetch ratings");
+      });
+});
+
+
 
 
 // starting the server and keeping the connection open to listen for more requests
