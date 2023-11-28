@@ -335,6 +335,22 @@ app.post('/submit_review', (req, res) => {
 
 });
 
+app.get('/businessadd', (req,res) => {
+  res.render('pages/addbusiness')
+});
+
+app.get('/category/1', (req,res) => {
+  res.render('pages/interior')
+});
+
+app.get('/category/2', (req,res) => {
+  res.render('pages/exterior')
+});
+
+app.get('/category/3', (req,res) => {
+  res.render('pages/lawnandgarden')
+});
+
 app.get('/get_reviews', (req, res) => {
   const query = `SELECT r.*, u.username FROM review r INNER JOIN users u ON r.user_id = u.user_id`;
 
