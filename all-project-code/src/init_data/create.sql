@@ -19,9 +19,11 @@ CREATE TABLE services(
   service_id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   description VARCHAR(200) NOT NULL,
-  cost INTEGER NOT NULL,
+  cost INTEGER NOT NULL
+  /*
   logo_url VARCHAR(200) NOT NULL,
   img_url VARCHAR(200) ARRAY[10]
+  */
 );
 
 DROP TABLE IF EXISTS payments CASCADE;
@@ -82,6 +84,3 @@ CREATE TABLE order_items (
   quantity INTEGER,
   total DECIMAL
 );
-
-
-
