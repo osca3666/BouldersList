@@ -84,4 +84,3 @@ CREATE TABLE order_items (
   quantity INTEGER,
   total DECIMAL
 );
-
