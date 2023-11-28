@@ -16,19 +16,25 @@ document.getElementById('dropdownToggle').addEventListener('click', function () 
     var dropdown = new bootstrap.Dropdown(document.getElementById('userDropdown'));
   });
 
-document.querySelector('#rating').addEventListener('click', function (e) {
+  document.querySelector('#rating').addEventListener('click', function (e) {
     if (e.target.nodeName === 'SPAN') {
         var currentSibling = e.target;
         var nextSibling = e.target;
+        var rating = 1;
         currentSibling.classList.add('active');
+
         while ((currentSibling = currentSibling.previousElementSibling)) {
             currentSibling.classList.add('active');
+            rating++;
         }
         while ((nextSibling = nextSibling.nextElementSibling)) {
             nextSibling.classList.remove('active');
         }
+
+        document.getElementById('ratingValue').value = rating;
     }
 });
+
 
 function countChars(obj){
   var maxLength = 200;

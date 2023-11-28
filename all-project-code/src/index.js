@@ -192,7 +192,8 @@ app.get('/business-profile/:id', async (req, res) => {
     const reviews = await db.any(reviewsQuery/*, [b_id]*/);
     res.render('pages/business', {
       service: services,
-      reviews: reviews
+      reviews: reviews,
+      businessId: b_id
     });
     console.log(services);
   }catch (error) {
@@ -306,15 +307,6 @@ app.post('/place-order', async (req, res) => {
   }
 });
 
-
-  app.get('/submit-review', (req,res) => {
-    res.render('pages/submit-review')
-  });
-
-  app.get('/submit-review', (req,res) => {
-    res.render('pages/submit-review')
-  });
-
   app.get('/logout', (req, res) =>{
     req.session.destroy();
     res.json({ message: 'Logged out successfully' });
@@ -381,7 +373,14 @@ app.get('/addbusiness',(req, res) => {
   }
 });
 
-app.post('/submit_review', (req, res) => {
+app.get('/submit-review', (req, res) => {
+  const businessId = req.query.businessId;
+  res.render('pages/submit-review', {
+      businessId: businessId
+  });
+});
+
+app.post('/submit-review', (req, res) => {
 
   const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
 
@@ -390,14 +389,12 @@ app.post('/submit_review', (req, res) => {
 
     res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
 
-
-
   }
   
   db.any(query)
   .then((data) => {
   
-    const query1 = `INSERT into review (business_id, user_id, rating, review_test) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
+    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
 
     db.any(query1)
     .then((data) => {
@@ -415,7 +412,7 @@ app.post('/submit_review', (req, res) => {
   })
   .catch((err) => {
     console.log(err);
-    res.redirect("/home");
+    res.redirect('/business-profile/:id');
   });
 
 

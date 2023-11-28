@@ -10,9 +10,11 @@
         </div>
       <% } %>
       <form action="/submit-review" method="post"> 
+        <input type="hidden" name="business" value="<%= businessId %>">
         <label for="name">Name:</label> 
         <input type="text" id="name" name="name" required> 
         <br>  
+        <input type="hidden" id="ratingValue" name="rating" value="">
         <div id='rating'>
           <span></span>
           <span></span>
