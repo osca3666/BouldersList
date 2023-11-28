@@ -1,4 +1,4 @@
-/*
+
 -- Insert data into the users table
 INSERT INTO users (username, password) VALUES ('testuser', 'hashedpassword');
 
@@ -22,4 +22,4 @@ INSERT INTO order_items (order_id, service_id, quantity, total) VALUES
   (1, 1, 2, 20.00),
   (1, 2, 1, 30.00),
   (2, 1, 3, 45.00);
-*/
+
