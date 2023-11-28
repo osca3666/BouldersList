@@ -133,8 +133,17 @@ app.post('/login', async (req, res) => {
         });
       } else {
 
-        req.session.user = { id: user_local.user_id, username: user_local.username, password: user_local.password};
-        return res.redirect('/');
+        user.username = user_local.username;
+        user.id = user_local.user_id;
+        user.password = user_local.password;
+
+        res.status(200).json({
+
+          status: 'success',
+          message: 'Welcome!',
+          user: user_local  // Include the user data in the response if needed
+        });
+
       }
     }
   } catch (error) {
