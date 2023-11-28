@@ -184,12 +184,24 @@ app.post('/add-service', async (req, res) => {
 
 
 app.get('/business-profile/:id', async (req, res) => {
-
-  const query = 'SELECT * FROM services';
-  db.any(query)
-    .then((service) => {
-      res.render('pages/business', {service});
+  try{
+    const serviceQuery = 'SELECT * FROM services';
+    const services = await db.any(serviceQuery);
+    const reviewsQuery = 'SELECT * FROM reviews WHERE business_id = $1';
+    const reviews = await db.any(reviewsQuery, [b_id]);
+    res.render('pages/business', {
+      service: services,
+      reviews: reviews
     });
+  }catch (error) {
+    console.error(error);
+    // Handle errors
+    res.render('pages/business', {
+      service: [],
+      reviews: [],
+      error: 'Failed to fetch data'
+    });
+  }
   const b_id = req.params.id;
   /*const options = {
     method: 'GET',
