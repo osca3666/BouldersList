@@ -1,4 +1,3 @@
-
 const express = require('express'); // To build an application server or API
 const app = express();
 app.use(express.static('public'));
@@ -262,9 +261,37 @@ app.post('/place-order', async (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
   
-app.get('/discover',(req, res) => {
-  res.render('pages/discover', { events: eventsData });
-});
+  app.get('/discover', (req, res) => {
+    const serviceType = req.query.type || 'service';
+    axios({
+      url: `https://local-business-data.p.rapidapi.com/search`,
+      method: 'GET',
+      dataType: 'json',
+      headers: {
+        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
+        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+      },
+      params: {
+        //apikey: process.env.API_KEY,
+        query: '${serviceType} in Boulder, Colorado',
+        lat: '40.0150',
+        lng: '-105.2705',
+        zoom: '10',
+        limit: '4',
+        language: 'en',
+        region: 'us'
+      },
+    })
+      .then(results => {
+      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+      res.render('pages/discover', {events : results.data.data});
+      })
+      .catch((err) => {
+      // Handle errors
+      console.log(err);
+      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
+      });
+  });
 
 app.get('/addbusiness',(req, res) => {
   res.render('pages/addbusiness');
