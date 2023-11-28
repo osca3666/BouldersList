@@ -185,14 +185,16 @@ app.post('/add-service', async (req, res) => {
 
 app.get('/business-profile/:id', async (req, res) => {
   try{
+    const b_id = req.params.id;
     const serviceQuery = 'SELECT * FROM services';
     const services = await db.any(serviceQuery);
-    const reviewsQuery = 'SELECT * FROM reviews WHERE business_id = $1';
-    const reviews = await db.any(reviewsQuery, [b_id]);
+    const reviewsQuery = 'SELECT * FROM review WHERE business_id = 1';
+    const reviews = await db.any(reviewsQuery/*, [b_id]*/);
     res.render('pages/business', {
       service: services,
       reviews: reviews
     });
+    console.log(services);
   }catch (error) {
     console.error(error);
     // Handle errors
@@ -202,7 +204,7 @@ app.get('/business-profile/:id', async (req, res) => {
       error: 'Failed to fetch data'
     });
   }
-  const b_id = req.params.id;
+  
   /*const options = {
     method: 'GET',
     url: 'https://local-business-data.p.rapidapi.com/business-details',
