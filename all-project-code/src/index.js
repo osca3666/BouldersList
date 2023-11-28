@@ -263,7 +263,7 @@ app.post('/place-order', async (req, res) => {
   });
   
 app.get('/discover',(req, res) => {
-    res.render('pages/discover');
+  res.render('pages/discover', { events: eventsData });
 });
 
 app.get('/addbusiness',(req, res) => {
