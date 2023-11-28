@@ -337,6 +337,22 @@ app.post('/review',(req, res) => {
 
 });
 
+app.get('/businessadd', (req,res) => {
+  res.render('pages/addbusiness')
+});
+
+app.get('/category/1', (req,res) => {
+  res.render('pages/interior')
+});
+
+app.get('/category/2', (req,res) => {
+  res.render('pages/exterior')
+});
+
+app.get('/category/3', (req,res) => {
+  res.render('pages/lawnandgarden')
+});
+
 
 // starting the server and keeping the connection open to listen for more requests
 module.exports = app.listen(3000);
