@@ -18,7 +18,12 @@ DROP TABLE IF EXISTS services CASCADE;
 CREATE TABLE services(
   service_id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
-  description VARCHAR(200) NOT NULL
+  description VARCHAR(200) NOT NULL,
+  cost INTEGER NOT NULL
+  /*
+  logo_url VARCHAR(200) NOT NULL,
+  img_url VARCHAR(200) ARRAY[10]
+  */
 );
 
 DROP TABLE IF EXISTS payments CASCADE;
@@ -33,13 +38,15 @@ CREATE TABLE payments(
 
 DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
-   	order_id SERIAL PRIMARY KEY, 
+    order_id SERIAL PRIMARY KEY, 
     user_id INTEGER REFERENCES users(user_id),
-	payment_id INTEGER REFERENCES payments(payment_id),
+    payment_id INTEGER REFERENCES payments(payment_id),
     total DECIMAL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'Pending'
 );
+
 
 DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category(
@@ -70,4 +77,10 @@ CREATE TABLE service_to_category(
     category_id INTEGER REFERENCES category(category_id)
 );
 
-
+CREATE TABLE order_items (
+  order_item_id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES order_details(order_id),
+  service_id INTEGER REFERENCES services(service_id),
+  quantity INTEGER,
+  total DECIMAL
+);

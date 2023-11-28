@@ -15,7 +15,6 @@
                 <li><a href="/category/1">Interior</a></li>
                 <li><a href="/category/2">Exterior</a></li>
                 <li><a href="/category/3">Lawn &amp; Garden</a></li>
-
             </ul>
         </section>
 
@@ -26,8 +25,47 @@
                 <button type="submit">Search</button>
             </form>
         </section>
-    </div>
 
+        <!-- form for submitting orders -->
+        <form action="/place-order" method="POST">
+            <label for="service">Select a Service:</label>
+            <select name="service_id" id="service" required>
+                <% for (const service of servicesData) { %>
+                    <option value="<%= service.service_id %>"><%= service.name %></option>
+                <% } %>
+            </select>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" id="quantity" placeholder="Enter quantity" required>
+
+            <button type="submit">Place Order</button>
+        </form>
+
+        <!-- form for adding services -->
+        <form action="/add-service" method="POST">
+            <label for="serviceName">Service Name:</label>
+            <input type="text" name="serviceName" id="serviceName" placeholder="Enter service name" required>
+
+            <label for="serviceDescription">Service Description:</label>
+            <textarea name="serviceDescription" id="serviceDescription" placeholder="Enter service description" required></textarea>
+
+            <label for="serviceCost">Service Cost:</label>
+            <input type="number" name="serviceCost" id="serviceCost" placeholder="Enter service cost" required>
+
+            <!-- Add more fields as needed -->
+
+            <button type="submit">Add Service</button>
+        </form>
+        <div class="container">
+    
+            <section class="add-business">
+                <h2>Add Your Business</h2>
+                
+                <a href="/businessadd" class="cta-button">Add Business</a>
+            </section>
+        </div>
+
+    </div>
 </main>
 
 <%- include ('../partials/footer') %>
