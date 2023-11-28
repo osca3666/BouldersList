@@ -45,15 +45,15 @@
                   </a>
                   <p class="card-text"><%=service[i].description%></p>
                 </div>
-                <div class="container mt-4 text-center">
-                  <a href="/submit-review" class="btn btn-primary">Add Review</a>
-              </div>
               </div>
             </div>
         </div>
       </form>
     </div>
     <%}%>
+</div>
+<div class="container mt-4 text-center">
+  <a href="/submit-review?businessId=<%= businessId %>" class="btn btn-primary">Add Review</a>
 </div>
 <div class="container mt-4">
   <h3>User Reviews</h3>
@@ -63,7 +63,6 @@
               <div class="card-body">
                   <h5 class="card-title">Rating: <%= review.rating %> Stars</h5>
                   <p class="card-text"><%= review.review_text %></p>
-                  <!-- Add more review details if available -->
               </div>
           </div>
       <% }); %>
