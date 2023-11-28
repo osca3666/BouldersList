@@ -20,7 +20,7 @@ CREATE TABLE services(
   name VARCHAR(50) NOT NULL,
   description VARCHAR(200) NOT NULL,
   cost INTEGER NOT NULL,
-  logo_url VARCHAR(200) NOT NULL,
+  logo_url VARCHAR(200),
   img_url VARCHAR(200) ARRAY[10]
   
 );
@@ -57,9 +57,9 @@ CREATE TABLE category(
 
 DROP TABLE IF EXISTS review CASCADE;
 CREATE TABLE review(
-    	review_id SERIAL PRIMARY KEY,
-    	business_id INT REFERENCES business(business_id),
-        user_id INT REFERENCES users(user_id),
+    review_id SERIAL PRIMARY KEY,
+    business_id INT REFERENCES business(business_id),
+    user_id INT REFERENCES users(user_id),
 		rating INT CHECK (rating >= 1 AND rating <= 5),
 		review_text VARCHAR(200)
 );
