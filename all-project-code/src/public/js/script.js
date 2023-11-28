@@ -1,8 +1,22 @@
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOMContentLoaded event fired');
+  // Add event listeners to all cards
+  const cards = document.querySelectorAll('div.card.h-100');
+  cards.forEach(card => {
+    card.addEventListener('click', function() {
+      // Use the data-id attribute to fetch more details or navigate
+      const businessId = this.getAttribute('data-id');
+      // Redirect to the business detail page, or use AJAX to fetch details
+      window.location.href = `/business-profile/${businessId}`;
+    });
+  });
+});
+
 document.getElementById('dropdownToggle').addEventListener('click', function () {
     var dropdown = new bootstrap.Dropdown(document.getElementById('userDropdown'));
   });
 
-  document.querySelector('#rating').addEventListener('click', function (e) {
+document.querySelector('#rating').addEventListener('click', function (e) {
     if (e.target.nodeName === 'SPAN') {
         var currentSibling = e.target;
         var nextSibling = e.target;
