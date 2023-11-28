@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 var bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
+const { resourceLimits } = require('worker_threads');
 
 // database configuration
 
@@ -52,12 +53,12 @@ let user = {
   password: undefined,
   username: undefined,
   id: undefined,
-  
+
 };
 
 
 app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
+  res.json({ status: 'success', message: 'Welcome!' });
 });
 
 app.get("/", (req, res) => {
@@ -65,8 +66,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    res.render("pages/register");
-  });
+  res.render("pages/register");
+});
 
 // Register ---------------------
 app.post('/register', async (req, res) => {
@@ -150,18 +151,63 @@ app.post('/login', async (req, res) => {
 
 
 
-app.get('/business', (req, res) => {
-    res.render('pages/business')
-  });
+app.get('/business-profile/:id', async (req, res) => {
 
-  app.get('/home', (req,res) => {
-    res.render('pages/home');
-  });
+  const query = 'SELECT * FROM services';
+  db.any(query)
+    .then((service) => {
+      res.render('pages/business', {service});
+    });
+  const b_id = req.params.id;
+  /*const options = {
+    method: 'GET',
+    url: 'https://local-business-data.p.rapidapi.com/business-details',
+    params: {
+      business_id: b_id,
+      extract_emails_and_contacts: 'true',
+      extract_share_link: 'false',
+      region: 'us',
+      language: 'en'
+    },
+    headers: {
+      'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
+      'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const results = await axios.request(options);
+    console.log(results.data);
+    res.render('pages/business', {results, serv});
+  } catch(error) {
+    console.log(error);
+    res.render('pages/business', { events: [], error: 'Failed to fetch local businesses' });
+  }*/
+});
+
+app.get('/service/:id', (req, res) => {
+
+  const s_id = req.params.id;
+  const query = 'SELECT * FROM services WHERE service_id = $1';
+  db.one(query, [s_id])
+    .then((data) => {
+      console.log(data);
+      res.render('pages/service', {data});
+    })
+    .catch((err) => {
+      console.log(err);
+      res.render('pages/service');
+    });
+});
+
+app.get('/home', (req, res) => {
+  res.render('pages/home');
+});
 
 
-  app.get('/user-agreement', (req, res) => {
-    res.render('pages/user-agreement');
-  });
+app.get('/user-agreement', (req, res) => {
+  res.render('pages/user-agreement');
+});
 
 
 
@@ -209,57 +255,57 @@ app.post('/place-order', async (req, res) => {
 
 
 
-  app.get('/submit-review', (req,res) => {
-    res.render('pages/submit-review')
-  });
+app.get('/submit-review', (req, res) => {
+  res.render('pages/submit-review')
+});
 
-  app.get('/submit-review', (req,res) => {
-    res.render('pages/submit-review')
-  });
+app.get('/submit-review', (req, res) => {
+  res.render('pages/submit-review')
+});
 
-  app.get('/logout', (req, res) =>{
-    req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
-  });
-  
-  app.get('/discover', (req, res) => {
-    const serviceType = req.query.type || 'service';
-    axios({
-      url: `https://local-business-data.p.rapidapi.com/search`,
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
-        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
-      },
-      params: {
-        //apikey: process.env.API_KEY,
-        query: '${serviceType} in Boulder, Colorado',
-        lat: '40.0150',
-        lng: '-105.2705',
-        zoom: '10',
-        limit: '4',
-        language: 'en',
-        region: 'us'
-      },
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.json({ message: 'Logged out successfully' });
+});
+
+app.get('/discover', (req, res) => {
+  const serviceType = req.query.type || 'service';
+  axios({
+    url: `https://local-business-data.p.rapidapi.com/search`,
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
+      'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+    },
+    params: {
+      //apikey: process.env.API_KEY,
+      query: '${serviceType} in Boulder, Colorado',
+      lat: '40.0150',
+      lng: '-105.2705',
+      zoom: '10',
+      limit: '4',
+      language: 'en',
+      region: 'us'
+    },
+  })
+    .then(results => {
+      //console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+      res.render('pages/discover', { events: results.data.data });
     })
-      .then(results => {
-      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
-      res.render('pages/discover', {events : results.data.data});
-      })
-      .catch((err) => {
+    .catch((err) => {
       // Handle errors
       console.log(err);
       res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
-      });
-  });
+    });
+});
 
-app.get('/addbusiness',(req, res) => {
+app.get('/addbusiness', (req, res) => {
   res.render('pages/addbusiness');
 });
 
 
- app.get('/profile', async (req, res) => {
+app.get('/profile', async (req, res) => {
   try {
     const orderDetailsQuery = 'SELECT * FROM order_details WHERE user_id = $1;';
     const orderDetails = await db.any(orderDetailsQuery, [user.id]);
@@ -283,42 +329,37 @@ app.get('/addbusiness',(req, res) => {
   }
 });
 
-app.post('/review',(req, res) => {
+app.post('/review', (req, res) => {
 
   const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
 
-  if(req.body.rating < 1 || req.body.rating > 5)
-  {
+  if (req.body.rating < 1 || req.body.rating > 5) {
 
-    res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
+    res.redirect('/submit-review', { message: "Error: rating must be in the range of 1-5" });
 
 
 
   }
-  
+
   db.any(query)
-  .then((data) => {
-  
-    const query1 = `INSERT into review (business_id, user_id, rating, review_test) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
-
-    db.any(query1)
     .then((data) => {
+      const query1 = `INSERT into review (business_id, user_id, rating, review_test) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
+      db.any(query1)
+        .then((data) => {
+          res.redirect('/business', { message: "Successfully added review" });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect('/business', { message: "Error occurred, failed to add review" });
+        });
 
-      res.redirect('/business', {message: "Successfully added review"});
+
 
     })
     .catch((err) => {
       console.log(err);
-      res.redirect('/business', {message: "Error occurred, failed to add review"});
+      res.redirect("/home");
     });
-
-
-
-  })
-  .catch((err) => {
-    console.log(err);
-    res.redirect("/home");
-  });
 
 
 });

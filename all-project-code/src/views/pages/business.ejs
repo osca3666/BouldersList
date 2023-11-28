@@ -3,64 +3,54 @@
 <%- include ('../partials/message') %>
 
 <div class="container text-center">
-    <h1>Business Name</h1>
+    <h1>Business Name <%=//results.data.name%></h1>
     <br>
     <br>
     <div class="row">
-        <div class="col">
-            <div class="row text-justify">
+        <div class="col-md-6">
+            <div class="text-justify">
                 <h4>About Us</h4>
                 <p>En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.</p>
             </div>
-            <div class="row">
+            <div class="text-justify">
                 <h4>Location</h4>
+                <p>552 UCB, Boulder, CO 80309-0552</p>
             </div>
-            <div class="row">
+            <div class="text-justify">
                 <h4>Contact Us</h4>
             </div>
         </div>
-        <div class="col">
+        <div class="col-md-6">
         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Colorado_Buffaloes_logo.svg/1200px-Colorado_Buffaloes_logo.svg.png" alt="Business Picture" width="450" height="300">
         </div>
     </div>
 </div>
 
 <div class="container">
-    <div class="row">
+    <div class="row mb-4">
         <h4>Services</h4>
     </div>
+    <% for (var i = 0; i < service.length; i++) {%>
     <div class="row">
+      <form action="/pages/service" method="GET">
         <div class="row card mb-3" style="max-width: 100%;">
             <div class="row g-0">
               <div class="col-md-4">
-                <img src="..." class="img-fluid rounded-start" alt="...">
+                <img src="<%=service[i].logo_url%>" class="img-fluid rounded-start" alt="...">
               </div>
               <div class="col-md-8">
                 <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                  <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+                  <a href="/service/<%=service[i].service_id%>">
+                  <h5 class="card-title"><%=service[i].name%></h5>
+                  </a>
+                  <p class="card-text"><%=service[i].description%></p>
                 </div>
               </div>
             </div>
         </div>
+      </form>
     </div>
-    <div class="row">
-        <div class="row card mb-3" style="max-width: 100%;">
-            <div class="row g-0">
-              <div class="col-md-4">
-                <img src="..." class="img-fluid rounded-start" alt="...">
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                  <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                </div>
-              </div>
-            </div>
-        </div>
-    </div>
+    <%}%>
 </div>
 <br>
 <br>
