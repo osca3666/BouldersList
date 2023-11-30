@@ -95,7 +95,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/login');
   } catch (err) {
     console.error(err);
-    res.render('pages/login', {error: "Registration failed. Username already exists."});
+    res.render('pages/register', {error: "Registration failed. Username already exists."});
 
   }
 });
@@ -301,7 +301,7 @@ app.post('/place-order', async (req, res) => {
 
   app.get('/logout', (req, res) =>{
     req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
+    res.render('pages/login', {message: "Logged out successfully"});
   });
   
   app.get('/discover', (req, res) => {
