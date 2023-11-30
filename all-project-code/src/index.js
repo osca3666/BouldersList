@@ -1,4 +1,3 @@
-
 const express = require('express'); // To build an application server or API
 const app = express();
 app.use(express.static('public'));
@@ -93,12 +92,7 @@ app.post('/register', async (req, res) => {
 
     console.log(data);
     console.log("test");
-
-    res.status(200).json({
-      status: 'success',
-      message: 'User registered successfully.',
-      user: data  // Include the registered user data in the response if needed
-    });
+    res.redirect('/login');
   } catch (err) {
     console.error(err);
     res.status(400).json({
@@ -113,7 +107,6 @@ app.post('/register', async (req, res) => {
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
-
 
 app.post('/login', async (req, res) => {
   try {
@@ -139,16 +132,8 @@ app.post('/login', async (req, res) => {
         });
       } else {
 
-        user.username = user_local.username;
-        user.id = user_local.user_id;
-        user.password = user_local.password;
-
-        res.status(200).json({
-
-          status: 'success',
-          message: 'Welcome!',
-          user: user_local  // Include the user data in the response if needed
-        });
+        req.session.user = {id: user_local.user_id, username: user_local.username, password: user_local.password};
+        return res.redirect('/');
       }
     }
   } catch (error) {
@@ -160,6 +145,18 @@ app.post('/login', async (req, res) => {
     });
   }
 });
+
+// Authentication Middleware.
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    // Default to login page.
+    return res.redirect('/login');
+  }
+  next();
+};
+
+// Authentication Required
+app.use(auth);
 
 
 app.post('/add-service', async (req, res) => {
@@ -186,9 +183,69 @@ app.post('/add-service', async (req, res) => {
 });
 
 
-app.get('/business', (req, res) => {
-    res.render('pages/business')
-  });
+app.get('/business-profile/:id', async (req, res) => {
+  try{
+    const b_id = req.params.id;
+    const serviceQuery = 'SELECT * FROM services';
+    const services = await db.any(serviceQuery);
+    const reviewsQuery = 'SELECT * FROM review WHERE business_id = 1';
+    const reviews = await db.any(reviewsQuery/*, [b_id]*/);
+    res.render('pages/business', {
+      service: services,
+      reviews: reviews,
+      businessId: b_id
+    });
+    console.log(services);
+  }catch (error) {
+    console.error(error);
+    // Handle errors
+    res.render('pages/business', {
+      service: [],
+      reviews: [],
+      error: 'Failed to fetch data'
+    });
+  }
+  
+  /*const options = {
+    method: 'GET',
+    url: 'https://local-business-data.p.rapidapi.com/business-details',
+    params: {
+      business_id: b_id,
+      extract_emails_and_contacts: 'true',
+      extract_share_link: 'false',
+      region: 'us',
+      language: 'en'
+    },
+    headers: {
+      'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
+      'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const results = await axios.request(options);
+    console.log(results.data);
+    res.render('pages/business', {results, serv});
+  } catch(error) {
+    console.log(error);
+    res.render('pages/business', { events: [], error: 'Failed to fetch local businesses' });
+  }*/
+});
+
+app.get('/service/:id', (req, res) => {
+
+  const s_id = req.params.id;
+  const query = 'SELECT * FROM services WHERE service_id = $1';
+  db.one(query, [s_id])
+    .then((data) => {
+      console.log(data);
+      res.render('pages/service', {data});
+    })
+    .catch((err) => {
+      console.log(err);
+      res.render('pages/service');
+    });
+});
 
   app.get('/home', (req,res) => {
     res.render('pages/home');
@@ -201,20 +258,20 @@ app.get('/business', (req, res) => {
 
 
 
-app.post('/place-order', async (req, res) => {
-  try {
+  app.post('/place-order', async (req, res) => {
+    try {
+    const user = req.session.user;
     const { service_id, quantity } = req.body;
-
     // Fetch service details based on service_id
     const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
 
     // If the service does not exist, insert it
     if (!serviceDetails) {
-      const { name, description, cost, logo_url, img_url } = req.body; // Adjust this based on your frontend form
+      const { name, description, cost } = req.body;
 
       // Insert the service into the services table
-      const insertServiceQuery = 'INSERT INTO services (name, description, cost, logo_url, img_url) VALUES ($1, $2, $3, $4, $5) RETURNING service_id;';
-      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost, logo_url, img_url]);
+      const insertServiceQuery = 'INSERT INTO services (name, description, cost) VALUES ($1, $2, $3) RETURNING service_id;';
+      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost]);
 
       // Update serviceDetails with the newly inserted service
       serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
@@ -229,7 +286,8 @@ app.post('/place-order', async (req, res) => {
     // Insert order details
     const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
     const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
-
+   console.log('User:', user);
+   console.log('User:', user.id);
     // Insert order items
     const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
     const itemTotal = quantity * serviceDetails.cost;
@@ -250,23 +308,42 @@ app.post('/place-order', async (req, res) => {
   }
 });
 
-
-  app.get('/submit-review', (req,res) => {
-    res.render('pages/submit-review')
-  });
-
-  app.get('/submit-review', (req,res) => {
-    res.render('pages/submit-review')
-  });
-
   app.get('/logout', (req, res) =>{
     req.session.destroy();
     res.json({ message: 'Logged out successfully' });
   });
   
-app.get('/discover',(req, res) => {
-    res.render('pages/discover');
-});
+  app.get('/discover', (req, res) => {
+    const serviceType = req.query.type || 'service';
+    axios({
+      url: `https://local-business-data.p.rapidapi.com/search`,
+      method: 'GET',
+      dataType: 'json',
+      headers: {
+        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
+        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+      },
+      params: {
+        //apikey: process.env.API_KEY,
+        query: '${serviceType} in Boulder, Colorado',
+        lat: '40.0150',
+        lng: '-105.2705',
+        zoom: '10',
+        limit: '4',
+        language: 'en',
+        region: 'us'
+      },
+    })
+      .then(results => {
+      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+      res.render('pages/discover', {events : results.data.data});
+      })
+      .catch((err) => {
+      // Handle errors
+      console.log(err);
+      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
+      });
+  });
 
 app.get('/addbusiness',(req, res) => {
   res.render('pages/addbusiness');
@@ -275,6 +352,8 @@ app.get('/addbusiness',(req, res) => {
 
  app.get('/profile', async (req, res) => {
   try {
+    const user = req.session.user;
+
     const orderDetailsQuery = 'SELECT * FROM order_details WHERE user_id = $1;';
     const orderDetails = await db.any(orderDetailsQuery, [user.id]);
 
@@ -297,7 +376,14 @@ app.get('/addbusiness',(req, res) => {
   }
 });
 
-app.post('/review',(req, res) => {
+app.get('/submit-review', (req, res) => {
+  const businessId = req.query.businessId;
+  res.render('pages/submit-review', {
+      businessId: businessId
+  });
+});
+
+app.post('/submit-review', (req, res) => {
 
   const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
 
@@ -306,14 +392,12 @@ app.post('/review',(req, res) => {
 
     res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
 
-
-
   }
   
   db.any(query)
   .then((data) => {
   
-    const query1 = `INSERT into review (business_id, user_id, rating, review_test) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
+    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
 
     db.any(query1)
     .then((data) => {
@@ -331,11 +415,57 @@ app.post('/review',(req, res) => {
   })
   .catch((err) => {
     console.log(err);
-    res.redirect("/home");
+    res.redirect('/business-profile/:id');
   });
 
 
 });
+
+app.get('/businessadd', (req,res) => {
+  res.render('pages/addbusiness')
+});
+
+app.get('/category/1', (req,res) => {
+  res.render('pages/interior')
+});
+
+app.get('/category/2', (req,res) => {
+  res.render('pages/exterior')
+});
+
+app.get('/category/3', (req,res) => {
+  res.render('pages/lawnandgarden')
+});
+
+app.get('/get_reviews', (req, res) => {
+  const query = `SELECT r.*, u.username FROM review r INNER JOIN users u ON r.user_id = u.user_id`;
+
+  db.any(query)
+      .then((data) => {
+          // Send the data back to the client
+          res.json(data);
+      })
+      .catch((err) => {
+          console.log(err);
+          res.status(500).send("Error occurred, failed to fetch reviews");
+      });
+});
+
+
+app.get('/get_ratings', (req, res) => {
+  const query = `SELECT rating FROM review WHERE rating BETWEEN 1 AND 5`;
+
+  db.any(query)
+      .then((data) => {
+          res.json(data);
+      })
+      .catch((err) => {
+          console.log(err);
+          res.status(500).send("Error occurred, failed to fetch ratings");
+      });
+});
+
+
 
 
 // starting the server and keeping the connection open to listen for more requests
