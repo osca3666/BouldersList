@@ -38,14 +38,6 @@
                 <div class="card-footer">
                   <small class="text-muted"><%- event.full_address %></small>
                 </div>
-		
-		       <!-- Add to Profile Form -->
-       <form action="/add-to-profile" method="post">
-         <input type="hidden" name="serviceId" value="<%- event.business_id %>">
-         <button type="submit" class="btn btn-primary">Order</button>
-        </form>
-
-              </div>
             </div>
           <% }); %>
         </div>
