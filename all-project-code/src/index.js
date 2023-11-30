@@ -311,11 +311,10 @@ app.post('/place-order', async (req, res) => {
       method: 'GET',
       dataType: 'json',
       headers: {
-        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
+        'X-RapidAPI-Key': process.env.API_KEY, 
         'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
       },
       params: {
-        //apikey: process.env.API_KEY,
         query: '${serviceType} in Boulder, Colorado',
         lat: '40.0150',
         lng: '-105.2705',
