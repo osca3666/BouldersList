@@ -96,7 +96,6 @@ app.post('/register', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.render('pages/register', {error: "Registration failed. Username already exists."});
-
   }
 });
 
@@ -104,7 +103,6 @@ app.post('/register', async (req, res) => {
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
-
 
 app.post('/login', async (req, res) => {
   try {
@@ -116,7 +114,6 @@ app.post('/login', async (req, res) => {
     if (!user_local) {
       // User not found or incorrect password
       res.render('pages/login', {error: "Incorrect username or password. If you do not have an account, please register."});
-        
     } else {
       const match = await bcrypt.compare(password, user_local.password);
 
@@ -125,7 +122,7 @@ app.post('/login', async (req, res) => {
         res.render('pages/login', {error: "Incorrect password"});
       } else {
 
-        req.session.user = { id: user_local.user_id, username: user_local.username, password: user_local.password};
+        req.session.user = {id: user_local.user_id, username: user_local.username, password: user_local.password};
         return res.redirect('/');
       }
     }
@@ -150,6 +147,7 @@ const auth = (req, res, next) => {
 
 // Authentication Required
 app.use(auth);
+
 
 app.post('/add-service', async (req, res) => {
   try {
@@ -250,20 +248,20 @@ app.get('/service/:id', (req, res) => {
 
 
 
-app.post('/place-order', async (req, res) => {
-  try {
+  app.post('/place-order', async (req, res) => {
+    try {
+    const user = req.session.user;
     const { service_id, quantity } = req.body;
-
     // Fetch service details based on service_id
     const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
 
     // If the service does not exist, insert it
     if (!serviceDetails) {
-      const { name, description, cost, logo_url, img_url } = req.body; // Adjust this based on your frontend form
+      const { name, description, cost } = req.body;
 
       // Insert the service into the services table
-      const insertServiceQuery = 'INSERT INTO services (name, description, cost, logo_url, img_url) VALUES ($1, $2, $3, $4, $5) RETURNING service_id;';
-      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost, logo_url, img_url]);
+      const insertServiceQuery = 'INSERT INTO services (name, description, cost) VALUES ($1, $2, $3) RETURNING service_id;';
+      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost]);
 
       // Update serviceDetails with the newly inserted service
       serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
@@ -278,7 +276,8 @@ app.post('/place-order', async (req, res) => {
     // Insert order details
     const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
     const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
-
+   console.log('User:', user);
+   console.log('User:', user.id);
     // Insert order items
     const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
     const itemTotal = quantity * serviceDetails.cost;
@@ -311,10 +310,11 @@ app.post('/place-order', async (req, res) => {
       method: 'GET',
       dataType: 'json',
       headers: {
-        'X-RapidAPI-Key': process.env.API_KEY, 
+        'X-RapidAPI-Key': process.env.API_KEY,
         'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
       },
       params: {
+        
         query: '${serviceType} in Boulder, Colorado',
         lat: '40.0150',
         lng: '-105.2705',
@@ -342,6 +342,8 @@ app.get('/addbusiness',(req, res) => {
 
  app.get('/profile', async (req, res) => {
   try {
+    const user = req.session.user;
+
     const orderDetailsQuery = 'SELECT * FROM order_details WHERE user_id = $1;';
     const orderDetails = await db.any(orderDetailsQuery, [user.id]);
 
