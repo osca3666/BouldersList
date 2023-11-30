@@ -31,11 +31,14 @@
         <h4>Pictures ------------- (make into slideshow format - website lab projects)</h4>
     </div>
     <div>
-        <% for (var i = 0; i < data.img_url.length; i++) {%>
+        <% if(data.img_url != null) {
+            for (var i = 0; i < data.img_url.length; i++) {%>
             <div class="row">
                 <img src="<%=data.img_url[i]%>" class="img-fluid rounded-start" alt="...">
             </div>
-        <% } %>
+        <% }} else{%>
+            <h6>No Pictures Yet</h6>
+        <%} %>
     </div>
 </div>
 <br>
