@@ -95,11 +95,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/login');
   } catch (err) {
     console.error(err);
-    res.status(400).json({
-      status: 'error',
-      message: 'Registration failed. Username already exists.',
-      error: err.message  // Include the error message in the response
-    });
+    res.render('pages/register', {error: "Registration failed. Username already exists."});
   }
 });
 
@@ -117,19 +113,13 @@ app.post('/login', async (req, res) => {
 
     if (!user_local) {
       // User not found or incorrect password
-      res.status(400).json({
-        status: 'error',
-        error: 'Incorrect username or password. If you do not have an account, please register.'
-      });
+      res.render('pages/login', {error: "Incorrect username or password. If you do not have an account, please register."});
     } else {
       const match = await bcrypt.compare(password, user_local.password);
 
       if (!match) {
         // Password does not match
-        res.status(400).json({
-          status: 'error',
-          error: 'Incorrect username or password. If you do not have an account, please register.'
-        });
+        res.render('pages/login', {error: "Incorrect password"});
       } else {
 
         req.session.user = {id: user_local.user_id, username: user_local.username, password: user_local.password};
@@ -310,7 +300,7 @@ app.get('/service/:id', (req, res) => {
 
   app.get('/logout', (req, res) =>{
     req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
+    res.render('pages/login', {message: "Logged out successfully"});
   });
   
   app.get('/discover', (req, res) => {
@@ -320,11 +310,11 @@ app.get('/service/:id', (req, res) => {
       method: 'GET',
       dataType: 'json',
       headers: {
-        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
+        'X-RapidAPI-Key': process.env.API_KEY,
         'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
       },
       params: {
-        //apikey: process.env.API_KEY,
+        
         query: '${serviceType} in Boulder, Colorado',
         lat: '40.0150',
         lng: '-105.2705',
