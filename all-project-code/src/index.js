@@ -95,11 +95,8 @@ app.post('/register', async (req, res) => {
     res.redirect('/login');
   } catch (err) {
     console.error(err);
-    res.status(400).json({
-      status: 'error',
-      message: 'Registration failed. Username already exists.',
-      error: err.message  // Include the error message in the response
-    });
+    res.render('pages/login', {error: "Registration failed. Username already exists."});
+
   }
 });
 
@@ -118,19 +115,14 @@ app.post('/login', async (req, res) => {
 
     if (!user_local) {
       // User not found or incorrect password
-      res.status(400).json({
-        status: 'error',
-        error: 'Incorrect username or password. If you do not have an account, please register.'
-      });
+      res.render('pages/login', {error: "Incorrect username or password. If you do not have an account, please register."});
+        
     } else {
       const match = await bcrypt.compare(password, user_local.password);
 
       if (!match) {
         // Password does not match
-        res.status(400).json({
-          status: 'error',
-          error: 'Incorrect username or password. If you do not have an account, please register.'
-        });
+        res.render('pages/login', {error: "Incorrect password"});
       } else {
 
         req.session.user = { id: user_local.user_id, username: user_local.username, password: user_local.password};
