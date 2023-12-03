@@ -185,7 +185,6 @@ app.get('/business-profile/:id', async (req, res) => {
       reviews: reviews,
       businessId: b_id
     });
-    console.log(services);
   }catch (error) {
     console.error(error);
     // Handle errors
