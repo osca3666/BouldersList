@@ -305,37 +305,56 @@ app.get('/service/:id', (req, res) => {
     res.render('pages/login', {message: "Logged out successfully"});
   });
   
-  app.get('/discover', (req, res) => {
-    const serviceType = req.query.type || 'service';
-    axios({
-      url: `https://local-business-data.p.rapidapi.com/search`,
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'X-RapidAPI-Key': process.env.API_KEY,
-        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
-      },
-      params: {
-        
-        query: '${serviceType} in Boulder, Colorado',
-        lat: '40.0150',
-        lng: '-105.2705',
-        zoom: '10',
-        limit: '4',
-        language: 'en',
-        region: 'us'
-      },
-    })
-      .then(results => {
-      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
-      res.render('pages/discover', {events : results.data.data});
-      })
-      .catch((err) => {
-      // Handle errors
-      console.log(err);
-      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
-      });
-  });
+//    app.get('/discover', (req, res) => {
+//    const serviceType = req.query.type || 'service';
+//    axios({
+//      url: `https://local-business-data.p.rapidapi.com/search`,
+//      method: 'GET',
+//      dataType: 'json',
+//      headers: {
+//        'X-RapidAPI-Key': process.env.API_KEY,
+//        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+//      },
+//      params: {
+//        
+//        query: '${serviceType} in Boulder, Colorado',
+//        lat: '40.0150',
+//        lng: '-105.2705',
+//        zoom: '10',
+//        limit: '4',
+//        language: 'en',
+//        region: 'us'
+//      },
+//    })
+//      .then(results => {
+//      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+//      res.render('pages/discover', {events : results.data.data});
+//      })
+//      .catch((err) => {
+//      // Handle errors
+//      console.log(err);
+//      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
+//      });
+//  });
+
+
+app.get('/discover', async (req, res) => {
+  try {
+    const businessQuery = 'SELECT * FROM business';
+    const businesses = await db.any(businessQuery);
+
+    console.log(businesses);  // Log the data to the console
+    res.render('pages/discover', { businesses });
+  } catch (error) {
+    console.error('Error fetching businesses:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });
+  }
+});
+
 
 app.get('/addbusiness',(req, res) => {
   res.render('pages/addbusiness');
