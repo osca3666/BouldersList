@@ -25,6 +25,7 @@ CREATE TABLE services(
   name VARCHAR(50) NOT NULL,
   description VARCHAR(200) NOT NULL,
   cost INTEGER NOT NULL,
+  type VARCHAR(50),
   logo_url VARCHAR(200),
   img_url VARCHAR(200) ARRAY[10]
   

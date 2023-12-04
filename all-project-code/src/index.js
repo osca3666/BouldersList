@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 var bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
-
 // database configuration
 
 const dbConfig = {
@@ -180,10 +179,14 @@ app.get('/business-profile/:id', async (req, res) => {
     const services = await db.any(serviceQuery);
     const reviewsQuery = 'SELECT * FROM review WHERE business_id = 1';
     const reviews = await db.any(reviewsQuery/*, [b_id]*/);
+    const businessQuery = 'SELECT * FROM business WHERE api_business_id = $1';
+    const business_data = await db.any(businessQuery, b_id);
+    console.log(business_data);
+
     res.render('pages/business', {
       service: services,
       reviews: reviews,
-      businessId: b_id
+      business: business_data
     });
   }catch (error) {
     console.error(error);
