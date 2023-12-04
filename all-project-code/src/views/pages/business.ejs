@@ -3,25 +3,69 @@
 <%- include ('../partials/message') %>
 
 <div class="container text-center">
-    <h1>Business Name <%=//results.data.name%></h1>
+    <h1><%=business[0].name%></h1>
     <br>
     <br>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="text-justify">
-                <h4>About Us</h4>
-                <p>En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.</p>
-            </div>
-            <div class="text-justify">
-                <h4>Location</h4>
-                <p>552 UCB, Boulder, CO 80309-0552</p>
-            </div>
-            <div class="text-justify">
-                <h4>Contact Us</h4>
-            </div>
+    <div class="row user-info-box">
+      <div class="col-md-4">
+        <div class="text-justify">
+          <%if(business[0].hours != null){%>
+            <h4>Hours</h4>
+            <%if(business[0].hours[0].slice(0,3) == 'Sun'){%>
+              <%for (let i = 0; i < business[0].hours.length; i++){%>
+                <p><%=business[0].hours[i]%></p>
+              <%}%>
+            <%} else if(business[0].hours[0].slice(0,3) == 'Sat'){%>
+              <%for (let i = 1; i < business[0].hours.length; i++){%>
+                <p><%=business[0].hours[i]%></p>
+              <%}%>
+                <p><%=business[0].hours[0]%></p>
+            <%} else if(business[0].hours[0].slice(0,3) == 'Fri'){%>
+              <%for (let i = 2; i < business[0].hours.length; i++){%>
+                <p><%=business[0].hours[i]%></p>
+              <%}%>
+                <p><%=business[0].hours[0]%></p>
+                <p><%=business[0].hours[1]%></p>
+            <%}%>
+          <%}%>
         </div>
-        <div class="col-md-6">
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/d/d3/Colorado_Buffaloes_logo.svg/1200px-Colorado_Buffaloes_logo.svg.png" alt="Business Picture" width="450" height="300">
+      </div>
+      <div class="col-md-4">
+            <div class="text-justify">
+              <%if(business[0].website != null){%>
+                <h4>Website</h4>
+                <p><%=business[0].website%></p>
+              <%}%>
+            </div>
+            <div class="text-justify">
+              <%if(business[0].address != null){%>
+                <h4>Address</h4>
+                <p><%=business[0].address%></p>
+              <%}%>
+            </div>
+            <div class="text-justify">
+              <%if(business[0].phone_number != null){%>
+                <h4>Phone Number</h4>
+                <p><%=business[0].phone_number.slice(0,3)%>-<%=business[0].phone_number.slice(3,6)%>-<%=business[0].phone_number.slice(6,10)%></p>
+              <%}%>
+            </div>
+            
+        </div>
+        
+        <div class="col-md-4">
+        <%if(business[0].photo_url != null){%>
+          <img src="<%=business[0].photo_url%>" alt="Logo Failed" width="300" height="200">
+        <%} else if(business[0].type == 'Plumber'){%>
+          <img src="https://www.constantcontact.com/blog/wp-content/uploads/2022/01/Social-Start-a-Plumbing-Business.jpg" alt="Logo Failed" width="450" height="300">
+        <%} else if(business[0].type == 'Landscaper'){%>
+          <img src="https://www.youraspire.com/hubfs/big-garden-grass-field-mowing-by-caucasian-gardener.jpg_s=1024x1024&w=is&k=20&c=ln0D2ZTNy8nc-t5zeXecdXi_VlojH5HC3PrNmG9fqX8=.jpg" alt="Logo Failed" width="450" height="300">
+        <%} else if(business[0].type == 'Roofing'){%>
+          <img src="https://peakbusinessvaluation.com/wp-content/uploads/Valuing-a-Roofing-Company.png" alt="Logo Failed" width="450" height="300">
+        <%} else if(business[0].type == 'Electrician'){%>
+          <img src="https://www.levelset.com/wp-content/uploads/2022/07/Grow-my-Electrician-Business.jpg" alt="Logo Failed" width="450" height="300">
+        <%} else if(business[0].type == 'Painter'){%>
+          <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freshbooks.com%2Fhub%2Fstartup%2Fhow-to-start-a-successful-painting-business&psig=AOvVaw3QA9u22ZI5wC6k5vzhL_P8&ust=1701755017487000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNCT4syJ9YIDFQAAAAAdAAAAABAI" alt="Logo Failed" width="450" height="300">  
+        <%}%>
         </div>
     </div>
 </div>
@@ -53,7 +97,7 @@
     <%}%>
 </div>
 <div class="container mt-4 text-center">
-  <a href="/submit-review?businessId=<%= businessId %>" class="btn btn-primary">Add Review</a>
+  <a href="/submit-review?businessId=<%= business.business_id %>" class="btn btn-primary">Add Review</a>
 </div>
 <div class="container mt-4">
   <h3>User Reviews</h3>
