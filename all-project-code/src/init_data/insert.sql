@@ -134,8 +134,23 @@ VALUES
     ('0x876bedadc5846a63:0xc2e3d641646a4ac7', '8057053675', 'Paint Spells', '{"Saturday: 7 AM-7 PM","Sunday: 7 AM-7 PM","Monday: 7 AM-7 PM","Tuesday: 7 AM-7 PM","Wednesday: 7 AM-7 PM","Thursday: 7 AM-7 PM","Friday: 7 AM-7 PM"}', null, 'Painter', 'https://lh5.googleusercontent.com/p/AF1QipN8jayhnCkQsQIXL3uvxqG8w2MudUi7s8bJsERq', '3701 Arapahoe Ave, Boulder, CO 80303'),
     ('0x876bedb2dd0de06f:0x4db9be7498295b1b', '7203072468', 'Paint Baum', '{"Saturday: 6 AM-9 PM","Sunday: 6 AM-9 PM","Monday: 6 AM-9 PM","Tuesday: 6 AM-9 PM","Wednesday: 6 AM-9 PM","Thursday: 6 AM-9 PM","Friday: 6 AM-9 PM"}', 'http://www.paintbaum.com', 'Painter', 'https://lh5.googleusercontent.com/p/AF1QipNyHHmx-9Fw6cN6DqtoNRIfemEx3T-btzse7ABr', null);
 
---INSERT INTO services () VALUES
---    (),
+INSERT INTO services (name, description, cost, type, logo_url) VALUES
+    --plumbing
+    ('Emergency Repairs', 'Responding to urgent plumbing issues such as burst pipes, leaks, and other emergencies.', 100, 'Plumber', 'https://www.portland.local-emergency-plumbing.com/wp-content/uploads/2020/09/Logo-4.png'),
+    ('Pipe Installation and Repair', 'Installing and repairing water supply lines, drainage pipes, and sewage lines.', 500, 'Plumber', 'https://www.mrrooter.com/us/en-us/mr-rooter/_assets/expert-tips/images/mrr-blog-a-homeowner-s-guide-to-pipe-repair-in-virginia.webp'),
+    ('Fixture Installation and Repair', 'Installing and repairing plumbing fixtures such as faucets, sinks, toilets, showers, and bathtubs.', 200, 'Plumber', 'https://careandrepair.com/wp-content/uploads/2021/11/bathroom-plumbing.jpeg'),
+    ('Water Heater Installation and Repair', 'Installing and repairing water heaters, including tankless water heaters and traditional tank-type water heaters.', 1000, 'Plumber', 'https://cdn.rotorootercdn.com/images/images/services/hero-size-adjustment/plumbing-water-heaters-9-by-4.jpg'),
+    ('Drain Cleaning', 'Clearing clogs and blockages in drains and sewer lines using tools like drain snakes, hydro-jetting, or chemical cleaners.', 250, 'Plumber', 'https://www.therooterworks.com/images/blog/drain-snake.jpg'),
+    ('Sewer Line Services', 'Repairing or replacing damaged or clogged sewer lines.', 2500, 'Plumber', 'https://www.sunshineplumbingheating.com/wp-content/uploads/2023/04/AdobeStock_588810873.jpeg'),
+    ('Gas Line Services', 'Installing and repairing gas lines for appliances like stoves, water heaters, and furnaces.', 1500, 'Plumber', 'https://www.mrrooter.com/us/en-us/mr-rooter/_assets/images/service-page-images/mrr-us-gas-line-service-image.webp'),
+    ('Leak Detection', 'Locating and fixing water leaks within the plumbing system.', 300, 'Plumber', 'https://www.leakdoctor.com/cm/dpl/images/create/1(2).jpg'),
+    ('Water Filtration and Purification', 'Installing systems to improve the quality of drinking water, such as water filtration and purification systems.', 1500, 'Plumber', 'https://www.myrescueplumbing.com/wp-content/uploads/2022/05/rescue-plumbing-water-filter-water-filtration-7-1024x536.webp'),
+    ('Backflow Prevention', 'Installing and maintaining backflow prevention devices to ensure that contaminated water does not flow back into the main water supply.', 500, 'Plumber', 'https://assets-global.website-files.com/6050b99b23cdbaa24f75e7b0/62631396b580e4073e6273d9_backflowpreventor-denver.jpeg'),
+    ('Septic System Services', 'Installing, repairing, and maintaining septic tanks and drainage fields.', 2000, 'Plumber', 'https://thumbor.forbes.com/thumbor/fit-in/900x510/https://www.forbes.com/home-improvement/wp-content/uploads/2022/09/featured-image-septic-tank-pump.jpeg.jpg'),
+    ('Plumbing Inspections', 'Conducting routine inspections of plumbing systems to identify potential issues before they become major problems.', 200, 'Plumber', 'https://www.ecodocspro.com/wp-content/uploads/2020/10/Plumbing-Inspection.jpg'),
+    ('Commercial Plumbing Services', 'Providing plumbing services for commercial properties, including office buildings, restaurants, and industrial facilities.', 10000, 'Plumber', 'https://www.planetplumbinganddrain.com/wp-content/uploads/2018/06/header-commercial-plumbing.jpg'),
+    ('Remodeling and Renovation', 'Assisting with plumbing needs during home or commercial property renovations and remodeling projects.', 50000, 'Plumber', 'https://theplumberheatingandcooling.com/wp-content/uploads/2021/05/Home-Remodeling-Renovation-Projects-that-Require-a-Plumber-Edit.jpg'),
+    ('Maintenance Contracts', 'Offering regular maintenance services to ensure the ongoing health and efficiency of plumbing systems.', 100, 'Plumber', 'https://www.callhamilton.com/media/a0wp10kj/adobestock_38444064.jpeg?width=550&format=webp');
 
 
 --INSERT INTO business_to_service () VALUES

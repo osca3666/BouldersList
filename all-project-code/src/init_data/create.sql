@@ -26,9 +26,7 @@ CREATE TABLE services(
   description VARCHAR(200) NOT NULL,
   cost INTEGER NOT NULL,
   type VARCHAR(50),
-  logo_url VARCHAR(200),
-  img_url VARCHAR(200) ARRAY[10]
-  
+  logo_url VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS payments CASCADE;
