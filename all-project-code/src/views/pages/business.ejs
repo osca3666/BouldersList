@@ -99,21 +99,20 @@
 <div class="container mt-4 text-center">
   <a href="/submit-review?businessId=<%=business[0].business_id %>" class="btn btn-primary">Add Review</a>
 </div>
+<br>
 <div class="container mt-4">
-  <h3>User Reviews</h3>
+  <h2>User Reviews</h2>
   <% if (reviews && reviews.length > 0) { %>
       <% reviews.forEach(function(review) { %>
-          <div class="card mb-2">
-              <div class="card-body">
-                  <h5 class="card-title">Rating: <%= review.rating %> Stars</h5>
-                  <p class="card-text"><%= review.review_text %></p>
-              </div>
+          <div class="review-box">
+              <h4><%= review.username %></h4>
+              <p>Rating: <%= review.rating %></p>
+              <p><%= review.review_text %></p>
           </div>
       <% }); %>
   <% } else { %>
-      <p>No reviews available.</p>
+      <p>No reviews yet.</p>
   <% } %>
 </div>
-<br>
 <br>
 <%- include ('../partials/footer') %>

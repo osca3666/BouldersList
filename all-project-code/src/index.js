@@ -456,54 +456,51 @@ app.get('/submit-review', (req, res) => {
 });
 
 app.post('/submit-review', (req, res) => {
+  const { businessId, rating, reviewText } = req.body;
+  console.log("Rating received:", rating);
+  console.log ("Review Text:", reviewText);
+  const userId = req.session.user.id;
+  console.log("User ID:", userId);
 
-  const b_id = req.body.business;
-  const message = req.body.message;
-  console.log(b_id);
-  const query = `SELECT * FROM business WHERE business_id = $1`;
 
-  if(req.body.rating < 1 || req.body.rating > 5)
-  {
-
-    res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
-
+  if (!businessId) {
+    return res.status(400).send('Business ID is required.');
   }
-  
-  db.any(query, b_id)
-  .then((data) => {
-    console.log(data);
-    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values ($1, $2, $3, $4) returning *;`;
+  if (rating < 1 || rating > 5) {
+    return res.status(400).send('Rating must be between 1 and 5.');
+  }
 
-    db.any(query1, [
-      data[0].business_id,
-      user.id,
-      null,
-      message
-    ])
+  const query = `SELECT * FROM business WHERE business_id = $1`;
+  
+  db.any(query, [businessId])
     .then((data) => {
-      console.log("success");
-    res.redirect(`/business-profile/${b_id}`
-    //,{message: "Successfully added review"}
-    );
+      if (data.length === 0) {
+        return res.status(404).send('Business not found.');
+      }
+
+      const insertQuery = `INSERT INTO review (business_id, user_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *;`;
+
+      db.any(insertQuery, [
+        businessId,
+        userId,
+        rating,
+        reviewText
+      ])
+      .then((data) => {
+        res.redirect('/business-profile/' + businessId);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error occurred while adding review.');
+      });
 
     })
     .catch((err) => {
-      console.log(err);
-      res.redirect(`/business-profile/${b_id}`
-      //, {message: "Error occurred, failed to add review"}
-      );
-    });
-
-
-
-  })
-  .catch((err) => {
-    console.log(err);
-    res.redirect(`/business-profile/${b_id}`);
-  });
-
-
+      console.error("Error occurred while adding review: ", err);
+      res.status(500).send(`Error occurred while adding review: ${err.message}`);
+    });    
 });
+
 
 app.get('/businessadd', (req,res) => {
   res.render('pages/addbusiness')
