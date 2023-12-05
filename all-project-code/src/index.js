@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 var bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
-
 // database configuration
 
 const dbConfig = {
@@ -95,11 +94,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/login');
   } catch (err) {
     console.error(err);
-    res.status(400).json({
-      status: 'error',
-      message: 'Registration failed. Username already exists.',
-      error: err.message  // Include the error message in the response
-    });
+    res.render('pages/register', {error: "Registration failed. Username already exists."});
   }
 });
 
@@ -107,7 +102,6 @@ app.post('/register', async (req, res) => {
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
-
 
 app.post('/login', async (req, res) => {
   try {
@@ -118,22 +112,16 @@ app.post('/login', async (req, res) => {
 
     if (!user_local) {
       // User not found or incorrect password
-      res.status(400).json({
-        status: 'error',
-        error: 'Incorrect username or password. If you do not have an account, please register.'
-      });
+      res.render('pages/login', {error: "Incorrect username or password. If you do not have an account, please register."});
     } else {
       const match = await bcrypt.compare(password, user_local.password);
 
       if (!match) {
         // Password does not match
-        res.status(400).json({
-          status: 'error',
-          error: 'Incorrect username or password. If you do not have an account, please register.'
-        });
+        res.render('pages/login', {error: "Incorrect password"});
       } else {
 
-        req.session.user = { id: user_local.user_id, username: user_local.username, password: user_local.password};
+        req.session.user = {id: user_local.user_id, username: user_local.username, password: user_local.password};
         return res.redirect('/');
       }
     }
@@ -158,6 +146,7 @@ const auth = (req, res, next) => {
 
 // Authentication Required
 app.use(auth);
+
 
 app.post('/add-service', async (req, res) => {
   try {
@@ -185,17 +174,27 @@ app.post('/add-service', async (req, res) => {
 
 app.get('/business-profile/:id', async (req, res) => {
   try{
+    //const api_b_id = req.params.id;
     const b_id = req.params.id;
-    const serviceQuery = 'SELECT * FROM services';
-    const services = await db.any(serviceQuery);
-    const reviewsQuery = 'SELECT * FROM review WHERE business_id = 1';
-    const reviews = await db.any(reviewsQuery/*, [b_id]*/);
+    //console.log(b_id);
+    
+    const businessQuery = 'SELECT * FROM business WHERE business_id = $1';
+    const business_data = await db.any(businessQuery, b_id);
+    //console.log(business_data);
+  
+    //const idQuery = 'SELECT business_id FROM business WHERE api_business_id = $1'
+    //const b_id = await db.any(idQuery, api_b_id);
+    
+    const serviceQuery = 'SELECT * FROM services WHERE services.service_id in (SELECT service_id FROM business_to_service WHERE business_id = $1)';
+    const service_data = await db.any(serviceQuery,b_id);
+    const reviewsQuery = 'SELECT * FROM review WHERE business_id = $1';
+    const reviews = await db.any(reviewsQuery,b_id);
+
     res.render('pages/business', {
-      service: services,
+      service: service_data,
       reviews: reviews,
-      businessId: b_id
+      business: business_data
     });
-    console.log(services);
   }catch (error) {
     console.error(error);
     // Handle errors
@@ -205,45 +204,23 @@ app.get('/business-profile/:id', async (req, res) => {
       error: 'Failed to fetch data'
     });
   }
-  
-  /*const options = {
-    method: 'GET',
-    url: 'https://local-business-data.p.rapidapi.com/business-details',
-    params: {
-      business_id: b_id,
-      extract_emails_and_contacts: 'true',
-      extract_share_link: 'false',
-      region: 'us',
-      language: 'en'
-    },
-    headers: {
-      'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
-      'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
-    }
-  };
-
-  try {
-    const results = await axios.request(options);
-    console.log(results.data);
-    res.render('pages/business', {results, serv});
-  } catch(error) {
-    console.log(error);
-    res.render('pages/business', { events: [], error: 'Failed to fetch local businesses' });
-  }*/
 });
 
-app.get('/service/:id', (req, res) => {
+app.get('/service/:s_id/:b_id', (req, res) => {
 
-  const s_id = req.params.id;
+  const s_id = req.params.s_id;
+  const b_id = req.params.b_id;
   const query = 'SELECT * FROM services WHERE service_id = $1';
   db.one(query, [s_id])
     .then((data) => {
-      console.log(data);
-      res.render('pages/service', {data});
+      res.render('pages/service', {
+        service: data,
+        business_id: b_id
+      });
     })
     .catch((err) => {
       console.log(err);
-      res.render('pages/service');
+      res.redirect(`business-profile/${b_id}`);
     });
 });
 
@@ -258,47 +235,141 @@ app.get('/service/:id', (req, res) => {
 
 
 
-app.post('/place-order', async (req, res) => {
-  try {
-    const { service_id, quantity } = req.body;
+  app.post('/place-order', async (req, res) => {
+    const business_id = req.body.b_id;
+    const service_id = req.body.s_id;
+    const details = req.body.details;
+
+    try {
+    const user = req.session.user;
 
     // Fetch service details based on service_id
     const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
 
     // If the service does not exist, insert it
-    if (!serviceDetails) {
-      const { name, description, cost, logo_url, img_url } = req.body; // Adjust this based on your frontend form
+
+    //commented out by Jon
+    /*if (!serviceDetails) {
+      const { name, description, cost } = req.body;
 
       // Insert the service into the services table
-      const insertServiceQuery = 'INSERT INTO services (name, description, cost, logo_url, img_url) VALUES ($1, $2, $3, $4, $5) RETURNING service_id;';
-      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost, logo_url, img_url]);
+      const insertServiceQuery = 'INSERT INTO services (name, description, cost) VALUES ($1, $2, $3) RETURNING service_id;';
+      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost]);
 
       // Update serviceDetails with the newly inserted service
       serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
-    }
-
-    console.log('Quantity:', quantity);
-    console.log('Service Cost:', serviceDetails.cost);
+    }*/
 
     // Calculate total based on quantity and service cost
-    const total = quantity * serviceDetails.cost;
+    const total = serviceDetails.cost;
 
     // Insert order details
     const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
     const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
-
+    console.log(orderInsertResult);
     // Insert order items
-    const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
+    /*const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
     const itemTotal = quantity * serviceDetails.cost;
     await db.none(orderItemsQuery, [orderInsertResult.order_id, serviceDetails.service_id, quantity, itemTotal]);
-
-    res.status(200).json({
+    */
+    res.redirect(`/service/${service_id}/${business_id}`);
+   
+    //Commented out by Jon
+    //I think there may be a way to pass a status with res.redirect
+    //but changing the status after res.redirect causes an error :(
+    /*res.status(200).json({
       status: 'success',
       message: 'Order placed successfully.',
       order: orderInsertResult,
-    });
+    });*/
+    
   } catch (error) {
     console.error('Error placing order:', error);
+    
+    /*res.status(500).json({
+      status: 'error',
+      message: 'An internal error occurred. Please try again later.',
+      error: error.message,
+    });*/
+    res.redirect(`/service/${service_id}/${business_id}`);
+    
+  }
+});
+
+  app.get('/logout', (req, res) =>{
+    req.session.destroy();
+    res.render('pages/login', {message: "Logged out successfully"});
+  });
+  
+//    app.get('/discover', (req, res) => {
+//    const serviceType = req.query.type || 'service';
+//    axios({
+//      url: `https://local-business-data.p.rapidapi.com/search`,
+//      method: 'GET',
+//      dataType: 'json',
+//      headers: {
+//        'X-RapidAPI-Key': process.env.API_KEY,
+//        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
+//      },
+//      params: {
+//        
+//        query: '${serviceType} in Boulder, Colorado',
+//        lat: '40.0150',
+//        lng: '-105.2705',
+//        zoom: '10',
+//        limit: '4',
+//        language: 'en',
+//        region: 'us'
+//      },
+//    })
+//      .then(results => {
+//      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+//      res.render('pages/discover', {events : results.data.data});
+//      })
+//      .catch((err) => {
+//      // Handle errors
+//      console.log(err);
+//      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
+//      });
+//  });
+
+
+
+app.get('/discover', async (req, res) => {
+  try {
+    const page = req.query.page || 1;  // Get the page from query parameters
+    const pageSize = 8;  // Number of businesses per page
+
+    // Fetch total number of businesses
+    const totalBusinessesQuery = 'SELECT COUNT(*) FROM business';
+    const totalBusinesses = await db.one(totalBusinessesQuery, [], (a) => +a.count);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalBusinesses / pageSize);
+
+    const offset = (page - 1) * pageSize;
+
+    // Retrieve selected business type filter
+const businessTypeFilter = req.query.businessType || ''; // Assuming businessType is passed in the query
+
+// Modify the business query based on the filter
+let businessQuery;
+let businessQueryParams;
+
+if (businessTypeFilter) {
+  businessQuery = 'SELECT * FROM business WHERE type = $1 LIMIT $2 OFFSET $3';
+  businessQueryParams = [businessTypeFilter, pageSize, offset];
+} else {
+  businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
+  businessQueryParams = [pageSize, offset];
+}
+
+    const businesses = await db.any(businessQuery, businessQueryParams);
+
+    //console.log(businesses);  // Log the data to the console
+    res.render('pages/discover', { businesses, currentPage: page, totalPages });
+  } catch (error) {
+    console.error('Error fetching businesses:', error);
     res.status(500).json({
       status: 'error',
       message: 'An internal error occurred. Please try again later.',
@@ -307,42 +378,6 @@ app.post('/place-order', async (req, res) => {
   }
 });
 
-  app.get('/logout', (req, res) =>{
-    req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
-  });
-  
-  app.get('/discover', (req, res) => {
-    const serviceType = req.query.type || 'service';
-    axios({
-      url: `https://local-business-data.p.rapidapi.com/search`,
-      method: 'GET',
-      dataType: 'json',
-      headers: {
-        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
-        'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
-      },
-      params: {
-        //apikey: process.env.API_KEY,
-        query: '${serviceType} in Boulder, Colorado',
-        lat: '40.0150',
-        lng: '-105.2705',
-        zoom: '10',
-        limit: '4',
-        language: 'en',
-        region: 'us'
-      },
-    })
-      .then(results => {
-      console.log(results.data); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
-      res.render('pages/discover', {events : results.data.data});
-      })
-      .catch((err) => {
-      // Handle errors
-      console.log(err);
-      res.render('pages/discover', { events: [], error: 'Failed to fetch local businesses' });
-      });
-  });
 
 app.get('/addbusiness',(req, res) => {
   res.render('pages/addbusiness');
@@ -351,6 +386,8 @@ app.get('/addbusiness',(req, res) => {
 
  app.get('/profile', async (req, res) => {
   try {
+    const user = req.session.user;
+
     const orderDetailsQuery = 'SELECT * FROM order_details WHERE user_id = $1;';
     const orderDetails = await db.any(orderDetailsQuery, [user.id]);
 
@@ -382,7 +419,10 @@ app.get('/submit-review', (req, res) => {
 
 app.post('/submit-review', (req, res) => {
 
-  const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
+  const b_id = req.body.business;
+  const message = req.body.message;
+  console.log(b_id);
+  const query = `SELECT * FROM business WHERE business_id = $1`;
 
   if(req.body.rating < 1 || req.body.rating > 5)
   {
@@ -391,20 +431,29 @@ app.post('/submit-review', (req, res) => {
 
   }
   
-  db.any(query)
+  db.any(query, b_id)
   .then((data) => {
-  
-    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
+    console.log(data);
+    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values ($1, $2, $3, $4) returning *;`;
 
-    db.any(query1)
+    db.any(query1, [
+      data[0].business_id,
+      user.id,
+      null,
+      message
+    ])
     .then((data) => {
-
-      res.redirect('/business', {message: "Successfully added review"});
+      console.log("success");
+    res.redirect(`/business-profile/${b_id}`
+    //,{message: "Successfully added review"}
+    );
 
     })
     .catch((err) => {
       console.log(err);
-      res.redirect('/business', {message: "Error occurred, failed to add review"});
+      res.redirect(`/business-profile/${b_id}`
+      //, {message: "Error occurred, failed to add review"}
+      );
     });
 
 
@@ -412,7 +461,7 @@ app.post('/submit-review', (req, res) => {
   })
   .catch((err) => {
     console.log(err);
-    res.redirect('/business-profile/:id');
+    res.redirect(`/business-profile/${b_id}`);
   });
 
 
@@ -461,39 +510,6 @@ app.get('/get_ratings', (req, res) => {
           res.status(500).send("Error occurred, failed to fetch ratings");
       });
 });
-
-app.post('/submit-business', async (req, res) => {
-  try {
-    const { businessName, businessDescription, businessImageURL } = req.body;
-
-    const query = 'INSERT INTO business (name, description, photo_url) VALUES ($1, $2, $3) RETURNING *;';
-    const data = await db.one(query, [businessName, businessDescription, businessImageURL]);
-
-    console.log(data);
-    res.status(201).json({
-      status: 'success',
-      message: 'Business added successfully.',
-      data: {
-        business_id: data.business_id,
-        name: data.name,
-        description: data.description,
-        photo_url: data.photo_url,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({
-      status: 'error',
-      message: 'Business upload failed.',
-      error: err.message,
-    });
-  }
-});
-
-
-
-
-
 
 
 

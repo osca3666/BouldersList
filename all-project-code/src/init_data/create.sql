@@ -9,10 +9,19 @@ CREATE TABLE users(
 DROP TABLE IF EXISTS business CASCADE;
 CREATE TABLE business(
   business_id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
+  api_business_id VARCHAR(50) NOT NULL,
   phone_number VARCHAR(10),
+<<<<<<< HEAD
   description VARCHAR(200) NOT NULL,
   photo_url VARCHAR(255)
+=======
+  name VARCHAR(200) NOT NULL,
+  hours VARCHAR(50) ARRAY [7],
+  website VARCHAR(200),
+  type VARCHAR(50),
+  photo_url VARCHAR(200),
+  address VARCHAR(200)
+>>>>>>> 0acab4285c9a66d2121bb69ca04da587701b97fc
 );
 
 DROP TABLE IF EXISTS services CASCADE;
@@ -21,9 +30,8 @@ CREATE TABLE services(
   name VARCHAR(50) NOT NULL,
   description VARCHAR(200) NOT NULL,
   cost INTEGER NOT NULL,
-  logo_url VARCHAR(200),
-  img_url VARCHAR(200) ARRAY[10]
-  
+  type VARCHAR(50),
+  logo_url VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS payments CASCADE;
@@ -48,14 +56,6 @@ CREATE TABLE order_details(
 );
 
 
-DROP TABLE IF EXISTS category CASCADE;
-CREATE TABLE category(
-    	category_id SERIAL PRIMARY KEY,
-    	name VARCHAR(50) NOT NULL,
-        description VARCHAR(200),
-		service_id INTEGER
-);
-
 DROP TABLE IF EXISTS review CASCADE;
 CREATE TABLE review(
     review_id SERIAL PRIMARY KEY,
@@ -71,11 +71,6 @@ CREATE TABLE business_to_service(
     service_id INTEGER REFERENCES services(service_id)
 );
 
-DROP TABLE IF EXISTS service_to_category CASCADE;
-CREATE TABLE service_to_category(
-    service_id INTEGER REFERENCES services(service_id),
-    category_id INTEGER REFERENCES category(category_id)
-);
 
 CREATE TABLE order_items (
   order_item_id SERIAL PRIMARY KEY,
