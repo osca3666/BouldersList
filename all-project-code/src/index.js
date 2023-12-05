@@ -348,8 +348,23 @@ app.get('/discover', async (req, res) => {
     const totalPages = Math.ceil(totalBusinesses / pageSize);
 
     const offset = (page - 1) * pageSize;
-    const businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
-    const businesses = await db.any(businessQuery, [pageSize, offset]);
+
+    // Retrieve selected business type filter
+const businessTypeFilter = req.query.businessType || ''; // Assuming businessType is passed in the query
+
+// Modify the business query based on the filter
+let businessQuery;
+let businessQueryParams;
+
+if (businessTypeFilter) {
+  businessQuery = 'SELECT * FROM business WHERE type = $1 LIMIT $2 OFFSET $3';
+  businessQueryParams = [businessTypeFilter, pageSize, offset];
+} else {
+  businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
+  businessQueryParams = [pageSize, offset];
+}
+
+    const businesses = await db.any(businessQuery, businessQueryParams);
 
     //console.log(businesses);  // Log the data to the console
     res.render('pages/discover', { businesses, currentPage: page, totalPages });

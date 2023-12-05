@@ -84,3 +84,13 @@ function getRatingFromCard(cardElement) {
   const ratingMatch = ratingText.match(/Rating: ([\d.]+)/);
   return ratingMatch ? parseFloat(ratingMatch[1]) : 0;
 }
+
+function updateBusinessType() {
+  const selectedType = document.getElementById('businessType').value;
+
+  // Update the URL
+  const currentUrl = new URL(window.location.href);
+  currentUrl.searchParams.set('businessType', selectedType === 'all' ? '' : selectedType);
+  window.location.href = currentUrl.toString();
+}
+
