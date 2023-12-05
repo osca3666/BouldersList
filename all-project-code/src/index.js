@@ -338,13 +338,25 @@ app.get('/service/:id', (req, res) => {
 //  });
 
 
+
 app.get('/discover', async (req, res) => {
   try {
-    const businessQuery = 'SELECT * FROM business';
-    const businesses = await db.any(businessQuery);
+    const page = req.query.page || 1;  // Get the page from query parameters
+    const pageSize = 8;  // Number of businesses per page
+
+    // Fetch total number of businesses
+    const totalBusinessesQuery = 'SELECT COUNT(*) FROM business';
+    const totalBusinesses = await db.one(totalBusinessesQuery, [], (a) => +a.count);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalBusinesses / pageSize);
+
+    const offset = (page - 1) * pageSize;
+    const businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
+    const businesses = await db.any(businessQuery, [pageSize, offset]);
 
     console.log(businesses);  // Log the data to the console
-    res.render('pages/discover', { businesses });
+    res.render('pages/discover', { businesses, currentPage: page, totalPages });
   } catch (error) {
     console.error('Error fetching businesses:', error);
     res.status(500).json({
@@ -354,6 +366,10 @@ app.get('/discover', async (req, res) => {
     });
   }
 });
+
+
+
+
 
 
 app.get('/addbusiness',(req, res) => {
