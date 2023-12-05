@@ -7,11 +7,19 @@
       <h1>Have a Local Business You Want to Upload?</h1>
         <h2>Fill Out the Upload Form Below!</h2>
 
-      <form action="/submit-business" method="post" enctype="multipart/form-data">
+      <form action="/submit-business" method="POST">
+
+        <div class="form-group">
+          <label for="api_business_id">Business Api:</label>
+          <input id="api_business_id" name="api_business_id" required>
+        </div>
+
         <div class="form-group">
           <label for="businessName">Business Name:</label>
           <input type="text" id="businessName" name="businessName" required>
         </div>
+
+       
 
         <div class="form-group">
           <label for="businessType">Business Type:</label>
