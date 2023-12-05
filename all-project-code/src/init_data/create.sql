@@ -11,23 +11,18 @@ CREATE TABLE business(
   business_id SERIAL PRIMARY KEY,
   api_business_id VARCHAR(50) NOT NULL,
   phone_number VARCHAR(10),
-<<<<<<< HEAD
-  description VARCHAR(200) NOT NULL,
-  photo_url VARCHAR(255)
-=======
   name VARCHAR(200) NOT NULL,
   hours VARCHAR(50) ARRAY [7],
   website VARCHAR(200),
   type VARCHAR(50),
   photo_url VARCHAR(200),
   address VARCHAR(200)
->>>>>>> 0acab4285c9a66d2121bb69ca04da587701b97fc
 );
 
 DROP TABLE IF EXISTS services CASCADE;
 CREATE TABLE services(
   service_id SERIAL PRIMARY KEY,
-  name VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(50) NOT NULL,
   description VARCHAR(200) NOT NULL,
   cost INTEGER NOT NULL,
   type VARCHAR(50),
@@ -46,11 +41,7 @@ CREATE TABLE payments(
 
 DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
-    order_id SERIAL PRIMARY KEY,
-    business_id INTEGER REFERENCES business(business_id),
-    realname VARCHAR(50) NOT NULL,
-    businessname VARCHAR(50) REFERENCES services(name),
-    servicedesc VARCHAR(200) NOT NULL,
+    order_id SERIAL PRIMARY KEY, 
     user_id INTEGER REFERENCES users(user_id),
     payment_id INTEGER REFERENCES payments(payment_id),
     total DECIMAL,
