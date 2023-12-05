@@ -464,13 +464,23 @@ app.get('/get_ratings', (req, res) => {
 
 app.post('/submit-business', async (req, res) => {
   try {
-    const { businessName, businessDescription, businessImageURL } = req.body;
+    const { name, description, photo_url } = req.body;
 
-    const query = 'INSERT INTO business (name, description, image) VALUES ($1, $2, $3) RETURNING *;';
-    const data = await db.one(query, [businessName, businessDescription, businessImageURL]);
+
+    const query = 'INSERT INTO business (name, description, photo_url) VALUES ($1, $2, $3) RETURNING *;';
+    const data = await db.one(query, [name, description, photo_url]);
 
     console.log(data);
-    res.redirect('/business-profile/' + data.business_id);
+    res.status(201).json({
+      status: 'success',
+      message: 'Business added successfully.',
+      data: {
+        business_id: data.business_id,
+        name: data.name,
+        description: data.description,
+        photo_url: data.photo_url,
+      },
+    });
   } catch (err) {
     console.error(err);
     res.status(400).json({
@@ -480,6 +490,7 @@ app.post('/submit-business', async (req, res) => {
     });
   }
 });
+
 
 
 

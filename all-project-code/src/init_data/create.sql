@@ -12,7 +12,7 @@ CREATE TABLE business(
   name VARCHAR(50) NOT NULL,
   phone_number VARCHAR(10),
   description VARCHAR(200) NOT NULL,
-  image VARCHAR(255)
+  photo_url VARCHAR(255)
 );
 
 DROP TABLE IF EXISTS services CASCADE;
