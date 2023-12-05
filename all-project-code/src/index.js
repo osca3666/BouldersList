@@ -311,7 +311,7 @@ app.post('/place-order', async (req, res) => {
       method: 'GET',
       dataType: 'json',
       headers: {
-        'X-RapidAPI-Key': '6a4fc0b615mshb48cf958def8a5ap14f75bjsn5af91f611855', 
+        'X-RapidAPI-Key': '48cb92697cmshd1fa4a0ffa98583p1daa10jsne028b23046ef', 
         'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
       },
       params: {
@@ -374,14 +374,18 @@ app.get('/submit-review', (req, res) => {
 
 app.post('/submit-review', (req, res) => {
 
-  const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
+  const businessId = req.body.business_id;
+  const rating = req.body.rating;
 
+  if(!businessId){
+    return res.redirect(302, '/submit-review');
+  }
   if(req.body.rating < 1 || req.body.rating > 5)
   {
-
-    res.redirect('/submit-review', {message: "Error: rating must be in the range of 1-5"});
-
+    return res.redirect(302, '/submit-review');
   }
+
+  const query = `SELECT * FROM business WHERE business_id = '${businessID}'`;
   
   db.any(query)
   .then((data) => {
@@ -391,12 +395,12 @@ app.post('/submit-review', (req, res) => {
     db.any(query1)
     .then((data) => {
 
-      res.redirect('/business', {message: "Successfully added review"});
+      res.redirect('/business-profile/:id', {message: "Successfully added review"});
 
     })
     .catch((err) => {
       console.log(err);
-      res.redirect('/business', {message: "Error occurred, failed to add review"});
+      res.redirect('/business-profile/:id', {message: "Error occurred, failed to add review"});
     });
 
 
@@ -404,7 +408,7 @@ app.post('/submit-review', (req, res) => {
   })
   .catch((err) => {
     console.log(err);
-    res.redirect('/business-profile/:id');
+    res.redirect('/business-profile/:id', {message: "internal error"});
   });
 
 
