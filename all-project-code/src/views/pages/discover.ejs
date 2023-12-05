@@ -5,15 +5,17 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
-        <h4>Business Type</h4>
-        <div class="list-group">
-          <% ['Plumber', 'Electrician', 'Roofing'].forEach(function(filter) { %>
-            <label class="list-group-item">
-              <input class="form-check-input me-1" type="checkbox" value="">
-              <%- filter %>
-            </label>
-          <% }); %>
-        </div>
+	<label for="businessType">Business Type:</label>
+	<select id="businessType" class="form-select" onchange="updateBusinessType()">
+	  <option value="all" selected>All Business Types</option>
+	  <option value="Plumber">Plumber</option>
+	  <option value="Landscaper">Landscaper</option>
+	  <option value="Roofing">Roofing</option>
+	  <option value="Electrician">Electrician</option>
+	  <option value="Painter">Painter</option>
+	</select>
+
+
         <h4>Sort by</h4>
         <select id="sortSelect" class="form-select">
           <option value="ratingDesc">Rating: High to Low</option>
@@ -27,9 +29,9 @@
 	<div class="col">
 	  <div class="card h-99" data-id="<%- business.api_business_id %>" onclick="">
 	    <!-- Display first photo, ensure your API returns an array even if it's one photo -->
-	    <% // if(business.photo_url) { %>
+	    <%  if(business.photo_url) { %>
 	      <img src="<%- business.photo_url[0] %>" class="card-img-top" alt="<%- business.name %>">
-	    <% // } %>
+	    <%  } %>
 	    <div class="card-body">
 	      <h6 class="card-title"><%- business.name %></h5>
 	      <p class="card-text">Type: <%- business.type %> | Phone: <%- business.phone_number %></p>
@@ -55,4 +57,4 @@
 
 
 <%- include ('../partials/footer') %>
-//<script src="/js/script.js"></script
+<script src="/js/script.js"></script
