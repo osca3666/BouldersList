@@ -174,15 +174,19 @@ app.post('/add-service', async (req, res) => {
 
 app.get('/business-profile/:id', async (req, res) => {
   try{
-    const api_b_id = req.params.id;
+    //const api_b_id = req.params.id;
+    const b_id = req.params.id;
+    //console.log(b_id);
     
-    const businessQuery = 'SELECT * FROM business WHERE api_business_id = $1';
-    const business_data = await db.any(businessQuery, api_b_id);
+    const businessQuery = 'SELECT * FROM business WHERE business_id = $1';
+    const business_data = await db.any(businessQuery, b_id);
+    //console.log(business_data);
   
-    const idQuery = 'SELECT business_id FROM business WHERE api_business_id = $1'
-    const b_id = await db.any(idQuery, api_b_id);
+    //const idQuery = 'SELECT business_id FROM business WHERE api_business_id = $1'
+    //const b_id = await db.any(idQuery, api_b_id);
+    
     const serviceQuery = 'SELECT * FROM services WHERE services.service_id in (SELECT service_id FROM business_to_service WHERE business_id = $1)';
-    const service_data = await db.any(serviceQuery,b_id[0].business_id);
+    const service_data = await db.any(serviceQuery,b_id);
     const reviewsQuery = 'SELECT * FROM review WHERE business_id = $1';
     const reviews = await db.any(reviewsQuery,b_id);
 
@@ -216,7 +220,7 @@ app.get('/service/:s_id/:b_id', (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.render('pages/service');
+      res.redirect(`business-profile/${b_id}`);
     });
 });
 
@@ -268,24 +272,26 @@ app.get('/service/:s_id/:b_id', (req, res) => {
     const itemTotal = quantity * serviceDetails.cost;
     await db.none(orderItemsQuery, [orderInsertResult.order_id, serviceDetails.service_id, quantity, itemTotal]);
     */
-    
+    res.redirect(`/service/${service_id}/${business_id}`);
+   
+    //Commented out by Jon
+    //I think there may be a way to pass a status with res.redirect
+    //but changing the status after res.redirect causes an error :(
     /*res.status(200).json({
       status: 'success',
       message: 'Order placed successfully.',
       order: orderInsertResult,
     });*/
-    res.render('pages/service', {
-      service: serviceDetails,
-      business_id: business_id
-    });
+    
   } catch (error) {
     console.error('Error placing order:', error);
-    res.render('pages/discover');
-    res.status(500).json({
+    
+    /*res.status(500).json({
       status: 'error',
       message: 'An internal error occurred. Please try again later.',
       error: error.message,
-    });
+    });*/
+    res.redirect(`/service/${service_id}/${business_id}`);
     
   }
 });
@@ -345,7 +351,7 @@ app.get('/discover', async (req, res) => {
     const businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
     const businesses = await db.any(businessQuery, [pageSize, offset]);
 
-    console.log(businesses);  // Log the data to the console
+    //console.log(businesses);  // Log the data to the console
     res.render('pages/discover', { businesses, currentPage: page, totalPages });
   } catch (error) {
     console.error('Error fetching businesses:', error);
@@ -356,11 +362,6 @@ app.get('/discover', async (req, res) => {
     });
   }
 });
-
->>>>>>> main
-
-
-
 
 
 app.get('/addbusiness',(req, res) => {
@@ -403,7 +404,10 @@ app.get('/submit-review', (req, res) => {
 
 app.post('/submit-review', (req, res) => {
 
-  const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
+  const b_id = req.body.business;
+  const message = req.body.message;
+  console.log(b_id);
+  const query = `SELECT * FROM business WHERE business_id = $1`;
 
   if(req.body.rating < 1 || req.body.rating > 5)
   {
@@ -412,20 +416,29 @@ app.post('/submit-review', (req, res) => {
 
   }
   
-  db.any(query)
+  db.any(query, b_id)
   .then((data) => {
-  
-    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values (${data[0].business_id}, ${user.id}, ${req.body.rating}, ${req.body.review_text}) returning *;`;
+    console.log(data);
+    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values ($1, $2, $3, $4) returning *;`;
 
-    db.any(query1)
+    db.any(query1, [
+      data[0].business_id,
+      user.id,
+      null,
+      message
+    ])
     .then((data) => {
-
-      res.redirect('/business', {message: "Successfully added review"});
+      console.log("success");
+    res.redirect(`/business-profile/${b_id}`
+    //,{message: "Successfully added review"}
+    );
 
     })
     .catch((err) => {
       console.log(err);
-      res.redirect('/business', {message: "Error occurred, failed to add review"});
+      res.redirect(`/business-profile/${b_id}`
+      //, {message: "Error occurred, failed to add review"}
+      );
     });
 
 
@@ -433,7 +446,7 @@ app.post('/submit-review', (req, res) => {
   })
   .catch((err) => {
     console.log(err);
-    res.redirect('/business-profile/:id');
+    res.redirect(`/business-profile/${b_id}`);
   });
 
 

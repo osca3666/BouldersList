@@ -25,7 +25,7 @@
     <div class="row row-cols0 row-cols-md-2 g-4">
       <% businesses.forEach(function(business) { %>
 	<div class="col">
-	  <div class="card h-99" data-id="<%- business.api_business_id %>" onclick="">
+	  <div class="card h-99" data-id="<%- business.business_id %>" onclick="">
 	    <!-- Display first photo, ensure your API returns an array even if it's one photo -->
 	    <% // if(business.photo_url) { %>
 	      <img src="<%- business.photo_url[0] %>" class="card-img-top" alt="<%- business.name %>">
