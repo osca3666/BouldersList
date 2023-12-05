@@ -464,11 +464,10 @@ app.get('/get_ratings', (req, res) => {
 
 app.post('/submit-business', async (req, res) => {
   try {
-    const { name, description, photo_url } = req.body;
-
+    const { businessName, businessDescription, businessImageURL } = req.body;
 
     const query = 'INSERT INTO business (name, description, photo_url) VALUES ($1, $2, $3) RETURNING *;';
-    const data = await db.one(query, [name, description, photo_url]);
+    const data = await db.one(query, [businessName, businessDescription, businessImageURL]);
 
     console.log(data);
     res.status(201).json({
@@ -490,6 +489,7 @@ app.post('/submit-business', async (req, res) => {
     });
   }
 });
+
 
 
 
