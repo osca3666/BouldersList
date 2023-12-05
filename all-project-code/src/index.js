@@ -466,10 +466,8 @@ app.post('/submit-business', async (req, res) => {
   try {
     const { businessName, businessDescription, businessImageURL } = req.body;
 
-
-    const query = 'INSERT INTO business (name, phone_number, description, image) VALUES ($1, $2, $3, $4) RETURNING *;';
-    const data = await db.one(query, [businessName, phoneNumber, businessDescription, businessImageURL]);
-
+    const query = 'INSERT INTO business (name, description, image) VALUES ($1, $2, $3) RETURNING *;';
+    const data = await db.one(query, [businessName, businessDescription, businessImageURL]);
 
     console.log(data);
     res.redirect('/business-profile/' + data.business_id);
@@ -482,6 +480,7 @@ app.post('/submit-business', async (req, res) => {
     });
   }
 });
+
 
 
 
