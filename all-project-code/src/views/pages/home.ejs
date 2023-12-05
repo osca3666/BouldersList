@@ -3,45 +3,112 @@
 
 <main>
     <div class="container">
-        <section class="hero-section">
-            <h1>Welcome to Boulder Catalog</h1>
-            <p>Discover top-rated services in your area.</p>
+        <section class="hero-section text-center">
+            <br>
+            <img src="/images/IMG_6650.jpg" alt="Home" style="height: 200px;">
+            <br><br><br>
         </section>
+        <div class="text-center row">
+            <a class="col" href="/discover?businessType=Plumber">
+                <img src="https://cdn-icons-png.flaticon.com/128/312/312971.png">
+            </a>
+            <a class="col" href="/discover?businessType=Roofing">
+                <img src="https://cdn-icons-png.flaticon.com/128/3054/3054429.png">
+            </a>
+            <a class="col" href="/discover?businessType=Painter">
+                <img src="https://cdn-icons-png.flaticon.com/128/2400/2400595.png">
+            </a>
+            <a class="col" href="/discover?businessType=Electrician">
+                <img src="https://cdn-icons-png.flaticon.com/128/2837/2837420.png">
+            </a>
+            <a class="col" href="/discover?businessType=Landscaper">
+                <img src="https://cdn-icons-png.flaticon.com/128/8980/8980293.png">
+            </a>
+        </div>
+        <br><br><br>
+        <div class="text-center">
+            <h2>Discover top-rated services in your area.</h2>
+            <br>
+            <% for(let i = 0; i < 3; i++){ %>
+                <div class="col entire-card">
+                  <div class="card h-100" data-id="<%- business[i].business_id %>" onclick="">
+                    <% if (business[i].photo_url) { %>
+                      <div class="card-img-container">
+                        <img src="<%= business[i].photo_url %>" class="card-img-top" alt="<%- business[i].name %>">
+                      </div>
+                    <% } else if (business[i].type == 'Plumber') { %>
+                      <div class="card-img-container">
+                        <img src="https://www.constantcontact.com/blog/wp-content/uploads/2022/01/Social-Start-a-Plumbing-Business.jpg" class="card-img-top" alt="Plumber Image">
+                      </div>
+                    <% } else if (business[i].type == 'Landscaper') { %>
+                      <div class="card-img-container">
+                        <img src="https://www.youraspire.com/hubfs/big-garden-grass-field-mowing-by-caucasian-gardener.jpg_s=1024x1024&w=is&k=20&c=ln0D2ZTNy8nc-t5zeXecdXi_VlojH5HC3PrNmG9fqX8=.jpg" class="card-img-top" alt="Landscaper Image">
+                      </div>
+                    <% } else if (business[i].type == 'Roofing') { %>
+                      <div class="card-img-container">
+                        <img src="https://peakbusinessvaluation.com/wp-content/uploads/Valuing-a-Roofing-Company.png" class="card-img-top" alt="Roofing Image">
+                      </div>
+                    <% } else if (business[i].type == 'Electrician') { %>
+                      <div class="card-img-container">
+                        <img src="https://www.levelset.com/wp-content/uploads/2022/07/Grow-my-Electrician-Business.jpg" class="card-img-top" alt="Electrician Image">
+                      </div>
+                    <% } else if (business[i].type == 'Painter') { %>
+                      <div class="card-img-container">
+                        <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freshbooks.com%2Fhub%2Fstartup%2Fhow-to-start-a-successful-painting-business&psig=AOvVaw3QA9u22ZI5wC6k5vzhL_P8&ust=1701755017487000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNCT4syJ9YIDFQAAAAAdAAAAABAI" class="card-img-top" alt="Painter Image">
+                      </div>
+                    <% } %>
+          
+                    <div class="card-overlay"></div>
+                    <br><br><br>
+                    <div class="card-body">
+                      <h6 class="card-title"><%- business[i].name %></h6>
+                      <p class="card-text">Type: <%- business[i].type %> | Phone: <%- business[i].phone_number %></p>
+                      <small class="text-muted"><%- business[i].address %></small>
+                    </div>
+          
+                    <div class="card-footer">
+                      <br>
+                    </div>
+                  </div>
+                </div>
+              <% }%>
+        </div>
 
-        <section class="popular-categories">
+
+        <!--<section class="popular-categories">
             <h2>Popular Categories</h2>
             <ul>
                 <li><a href="/category/1">Interior</a></li>
                 <li><a href="/category/2">Exterior</a></li>
                 <li><a href="/category/3">Lawn &amp; Garden</a></li>
             </ul>
-        </section>
+        </section>-->
 
-        <section class="search-bar">
+        <!--<section class="search-bar">
             <p>Discover top-rated services in Boulder.</p>
             <form action="/search" method="GET">
                 <input type="text" name="query" placeholder="Search for services">
                 <button type="submit">Search</button>
             </form>
-        </section>
+        </section>-->
 
         <!-- form for submitting orders -->
-        <form action="/place-order" method="POST">
+       <!--<form action="/place-order" method="POST">
             <label for="service">Select a Service:</label>
             <select name="service_id" id="service" required>
-                <% for (const service of servicesData) { %>
-                    <option value="<%= service.service_id %>"><%= service.name %></option>
-                <% } %>
+                <%// for (const service of servicesData) { %>
+                    <option value="<%=// service.service_id %>"><%=// service.name %></option>
+                <%// } %>
             </select>
 
             <label for="quantity">Quantity:</label>
             <input type="number" name="quantity" id="quantity" placeholder="Enter quantity" required>
 
             <button type="submit">Place Order</button>
-        </form>
+        </form>-->
 
         <!-- form for adding services -->
-        <form action="/add-service" method="POST">
+        <!--<form action="/add-service" method="POST">
             <label for="serviceName">Service Name:</label>
             <input type="text" name="serviceName" id="serviceName" placeholder="Enter service name" required>
 
@@ -51,18 +118,18 @@
             <label for="serviceCost">Service Cost:</label>
             <input type="number" name="serviceCost" id="serviceCost" placeholder="Enter service cost" required>
 
-            <!-- Add more fields as needed -->
+             Add more fields as needed
 
             <button type="submit">Add Service</button>
-        </form>
-        <div class="container">
+        </form>-->
+        <!--<div class="container">
     
             <section class="add-business">
                 <h2>Add Your Business</h2>
                 
                 <a href="/businessadd" class="cta-button">Add Business</a>
             </section>
-        </div>
+        </div>-->
 
     </div>
 </main>

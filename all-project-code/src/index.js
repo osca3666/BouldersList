@@ -59,12 +59,14 @@ app.get('/welcome', (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-    try {
-        // Fetch service data from the database
-        const servicesData = await db.any('SELECT * FROM services');
+  try {
+    topthreebusinessQuery = 'SELECT * FROM business ORDER BY rating DESC LIMIT 3';
+    topthreebusiness = await db.any(topthreebusinessQuery);
+    //console.log(topthreebusiness);
 
-        // Render the home template with the service data
-        res.render("pages/home", { servicesData });
+    res.render("pages/home", {
+      business: topthreebusiness
+    });
     } catch (error) {
         console.error('Error fetching service data:', error);
         res.status(500).json({
