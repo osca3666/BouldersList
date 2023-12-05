@@ -462,6 +462,28 @@ app.get('/get_ratings', (req, res) => {
       });
 });
 
+app.post('/submit-business', async (req, res) => {
+  try {
+    const { businessName, businessDescription, businessImageURL } = req.body;
+
+
+    const query = 'INSERT INTO business (name, description, image) VALUES ($1, $2, $3) RETURNING *;';
+    const data = await db.one(query, [businessName, businessDescription, businessImageURL]);
+
+    console.log(data);
+    res.redirect('/business-profile/' + data.business_id);
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({
+      status: 'error',
+      message: 'Business upload failed.',
+      error: err.message,
+    });
+  }
+});
+
+
+
 
 
 
