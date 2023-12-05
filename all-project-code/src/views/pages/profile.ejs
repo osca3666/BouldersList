@@ -8,22 +8,21 @@
         <img src="/images/profile-avatar.png" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
       <div>
-        <h2>JohnIsHere</h2>
-        <p>Name: John Deen</p>
-        <p>Email: john@example.com</p>
+        <h2><%=user.username %></h2>
+        <p>Thanks for using Boulder's List</p>
       </div>
     </div>
 
     <div class="order-summary-box">
-      <p><b>Total Orders: 1</b></p>
-<p><b>Paid (0) </b></p>
-<p><b>Shipped (1) </b></p>
-<p><b>Completed (0) </b></p>
+      <p><b>Total Orders: <%= orders.length %> </b></p>
+      <p><b>Pending (<%=orders.length %>) </b></p>
+      <p><b>Paid (0) </b></p>
+      <p><b>Completed (0) </b></p>
     </div>
   </section>
 
-  <!-- Orders Table Section -->
-  <section class="mt-4">
+   <!-- Orders Table Section -->
+   <section class="mt-4">
     <h2>My Orders</h2>
     <table class="table">
       <thead>
@@ -36,11 +35,21 @@
       </thead>
       <tbody>
         <% for (const order of orders) { %>
-          <tr>
-            <td><%= order.order_id %></td>
+          <tr class="order-row">
+            <td class="order-id" data-order-id="<%= order.order_id %>"><%= order.order_id %></td>
             <td>$<%= order.total %></td>
             <td><%= order.created_at %></td>
             <td><%= order.status %></td>
+          </tr>
+          <tr class="order-details" data-order-id="<%= order.order_id %>" style="display: none;">
+            <td colspan="4">
+              <p><b>Business:</b> <%= order.realname %></p>
+              <p><b>Service:</b> <%= order.businessname %></p>
+              <p><b>Description:</b> <%= order.servicedesc %></p>
+              <!--<p><b>Service:</b> <%= order.service_name %></p>
+              <p><b>Description:</b> <%= order.description %></p>
+              Add more details as needed -->
+            </td>
           </tr>
         <% } %>
       </tbody>
@@ -49,3 +58,25 @@
 </div>
 
 <%- include ('../partials/footer') %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Add click event listener to each order_id element
+    document.querySelectorAll('.order-id').forEach(orderIdElement => {
+      orderIdElement.addEventListener('click', () => {
+        const orderId = orderIdElement.getAttribute('data-order-id');
+        const detailsContainer = document.querySelector(`.order-details[data-order-id="${orderId}"]`);
+
+        // Toggle the visibility of order details within the clicked row
+        detailsContainer.style.display = detailsContainer.style.display === 'none' ? 'block' : 'none';
+
+        // Hide details in other rows
+        document.querySelectorAll('.order-row .order-details').forEach(otherDetailsContainer => {
+          if (otherDetailsContainer !== detailsContainer) {
+            otherDetailsContainer.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>
