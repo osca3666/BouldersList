@@ -3,44 +3,68 @@
 <%- include ('../partials/message') %>
 
 <div class="container text-center">
-    <h1><%=data.name%></h1>
+    <h1><%=service.name%></h1>
     <br>
     <br>
     <div class="row">
-        <div class="col-md-6">
-            <div class="text-justify">
+        <div class="col-md-4">
+            <div class="text-left">
                 <h4>Description</h4>
-                <p><%=data.description%></p>
+                <p><%=service.description%></p>
             </div>
             <div class="text-justify">
                 <h4>Cost</h4>
-                <p>$<%=data.cost%> per hour</p>
+                <p>$<%=service.cost%> per hour</p>
+                <p style="font-size: 12px;">This number is a base cost and could be higher depending on request.</p>
             </div>
             <div class="text-justify">
-                <button class="btn-lg">Book Now</button>
+                <button class="show-booking" >
+                    Book Now</button>
             </div>
         </div>
-        <div class="col-md-6">
-        <img src="<%=data.logo_url%>" alt="Service Logo" width="450" height="300">
+        <div class="col-md-8">
+        <img src="<%=service.logo_url%>" alt="Service Logo" width="100%">
         </div>
     </div>
 </div>
 
-<div class="container">
-    <div class="row mb-4">
-        <h4>Pictures ------------- (make into slideshow format - website lab projects)</h4>
-    </div>
-    <div>
-        <% if(data.img_url != null) {
-            for (var i = 0; i < data.img_url.length; i++) {%>
-            <div class="row">
-                <img src="<%=data.img_url[i]%>" class="img-fluid rounded-start" alt="...">
+
+<section>
+    <div class="modal-box"> 
+        <form action="/place-order" method="POST"> 
+            <h2 class="text-center">Book <%=service.name%></h2>
+            <div>
+                <input class="hide" name="b_id" id="b_id" value="<%=business_id%>">
             </div>
-        <% }} else{%>
-            <h6>No Pictures Yet</h6>
-        <%} %>
+            <div>
+                <input class="hide" name="s_id" id="s_id" value="<%=service.service_id%>">
+            </div>
+            <div class="mb-3" id="details-div">
+                <label for="details" class="form-label" style="vertical-align: top;"><b>Order Notes</b></label>
+                <textarea class="form-control" name="details" id="details" rows="3"
+                placeholder="Please add some details about your request"></textarea>
+            </div>
+            <br>
+            <br>
+            <button class="book">Book</button>
+        </form>  
+        <button class="close-booking" >Close</button>
+        
     </div>
-</div>
-<br>
-<br>
+</section>
+<script>
+    const section = document.querySelector("section"),
+        overlay = document.querySelector(".overlay"),
+        showBtn = document.querySelector(".show-booking"),
+        closeBtn = document.querySelector(".close-booking"),
+        bookBtn = document.querySelector(".book");
+    
+
+    showBtn.addEventListener("click", () => section.classList.add("active"));
+    closeBtn.addEventListener("click", () => section.classList.remove("active"));
+    bookBtn.addEventListener("click", () => section.classList.remove("active"));
+    
+</script>
+
+
 <%- include ('../partials/footer') %>
