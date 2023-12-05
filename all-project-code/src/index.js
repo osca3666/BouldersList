@@ -418,50 +418,47 @@ app.get('/submit-review', (req, res) => {
 });
 
 app.post('/submit-review', (req, res) => {
+  const { businessId, rating, reviewText } = req.body;
+  const userId = req.session.id;
 
-  const query = `SELECT * FROM business WHERE business.name = '${req.body.business}'`;
-
-  if(!businessId){
-    return res.redirect(302, '/submit-review');
+  if (!businessId) {
+    return res.status(400).send('Business ID is required.');
   }
-  if(req.body.rating < 1 || req.body.rating > 5)
-  {
-    return res.redirect(302, '/submit-review');
+  if (rating < 1 || rating > 5) {
+    return res.status(400).send('Rating must be between 1 and 5.');
   }
 
-  const query = `SELECT * FROM business WHERE business_id = '${businessID}'`;
+  const query = `SELECT * FROM business WHERE business_id = $1`;
   
-  db.any(query, b_id)
-  .then((data) => {
-    console.log(data);
-    const query1 = `INSERT into review (business_id, user_id, rating, review_text) values ($1, $2, $3, $4) returning *;`;
-
-    db.any(query1, [
-      data[0].business_id,
-      user.id,
-      null,
-      message
-    ])
+  db.any(query, [businessId])
     .then((data) => {
+      if (data.length === 0) {
+        return res.status(404).send('Business not found.');
+      }
 
-      res.redirect('/business', {message: "Successfully added review"});
+      const insertQuery = `INSERT INTO review (business_id, user_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *;`;
+
+      db.any(insertQuery, [
+        businessId,
+        userId,
+        rating,
+        reviewText
+      ])
+      .then((data) => {
+        res.redirect('/business/' + businessId);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error occurred while adding review.');
+      });
 
     })
     .catch((err) => {
-      console.log(err);
-      res.redirect('/business', {message: "Error occurred, failed to add review"});
+      console.error(err);
+      res.status(500).send('Error occurred while fetching business data.');
     });
-
-
-
-  })
-  .catch((err) => {
-    console.log(err);
-    res.redirect('/business-profile/:id');
-  });
-
-
 });
+
 
 app.get('/businessadd', (req,res) => {
   res.render('pages/addbusiness')
