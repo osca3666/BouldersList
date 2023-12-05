@@ -237,66 +237,102 @@ app.get('/service/:s_id/:b_id', (req, res) => {
 
 
 
-  app.post('/place-order', async (req, res) => {
-    const business_id = req.body.b_id;
-    const service_id = req.body.s_id;
-    const details = req.body.details;
+//   app.post('/place-order', async (req, res) => {
+//     const business_id = req.body.b_id;
+//     const service_id = req.body.s_id;
+//     const details = req.body.details;
 
-    try {
+//     try {
+//     const user = req.session.user;
+
+//     // Fetch service details based on service_id
+//     const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
+
+//     // If the service does not exist, insert it
+
+//     //commented out by Jon
+//     /*if (!serviceDetails) {
+//       const { name, description, cost } = req.body;
+
+//       // Insert the service into the services table
+//       const insertServiceQuery = 'INSERT INTO services (name, description, cost) VALUES ($1, $2, $3) RETURNING service_id;';
+//       const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost]);
+
+//       // Update serviceDetails with the newly inserted service
+//       serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
+//     }*/
+
+//     // Calculate total based on quantity and service cost
+//     const total = serviceDetails.cost;
+
+//     // Insert order details
+//     const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
+//     const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
+//     console.log(orderInsertResult);
+//     // Insert order items
+//     /*const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
+//     const itemTotal = quantity * serviceDetails.cost;
+//     await db.none(orderItemsQuery, [orderInsertResult.order_id, serviceDetails.service_id, quantity, itemTotal]);
+//     */
+//     res.redirect(`/service/${service_id}/${business_id}`);
+   
+//     //Commented out by Jon
+//     //I think there may be a way to pass a status with res.redirect
+//     //but changing the status after res.redirect causes an error :(
+//     /*res.status(200).json({
+//       status: 'success',
+//       message: 'Order placed successfully.',
+//       order: orderInsertResult,
+//     });*/
+    
+//   } catch (error) {
+//     console.error('Error placing order:', error);
+    
+//     /*res.status(500).json({
+//       status: 'error',
+//       message: 'An internal error occurred. Please try again later.',
+//       error: error.message,
+//     });*/
+//     res.redirect(`/service/${service_id}/${business_id}`);
+    
+//   }
+// });
+
+app.post('/place-order', async (req, res) => {
+  const business_id = req.body.b_id;
+  const service_id = req.body.s_id;
+  const details = req.body.details;
+
+  try {
     const user = req.session.user;
 
+    const businessDetails = await db.one('SELECT * FROM business WHERE business_id = $1', [business_id]);
     // Fetch service details based on service_id
     const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
 
-    // If the service does not exist, insert it
-
-    //commented out by Jon
-    /*if (!serviceDetails) {
-      const { name, description, cost } = req.body;
-
-      // Insert the service into the services table
-      const insertServiceQuery = 'INSERT INTO services (name, description, cost) VALUES ($1, $2, $3) RETURNING service_id;';
-      const serviceInsertResult = await db.one(insertServiceQuery, [name, description, cost]);
-
-      // Update serviceDetails with the newly inserted service
-      serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
-    }*/
-
     // Calculate total based on quantity and service cost
+    const realname = businessDetails.name;
     const total = serviceDetails.cost;
+    const businessname = serviceDetails.name;
+    const servicedesc = serviceDetails.description;
 
     // Insert order details
-    const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
-    const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
-    console.log(orderInsertResult);
-    // Insert order items
-    /*const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
-    const itemTotal = quantity * serviceDetails.cost;
-    await db.none(orderItemsQuery, [orderInsertResult.order_id, serviceDetails.service_id, quantity, itemTotal]);
-    */
+    const orderDetailsQuery = `
+      INSERT INTO order_details (user_id, business_id, realname, businessname, servicedesc, total, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING order_id;
+    `;
+
+    const orderInsertResult = await db.one(orderDetailsQuery, [user.id, business_id, realname, businessname, servicedesc, total, 'Pending']);
+
     res.redirect(`/service/${service_id}/${business_id}`);
-   
-    //Commented out by Jon
-    //I think there may be a way to pass a status with res.redirect
-    //but changing the status after res.redirect causes an error :(
-    /*res.status(200).json({
-      status: 'success',
-      message: 'Order placed successfully.',
-      order: orderInsertResult,
-    });*/
-    
   } catch (error) {
     console.error('Error placing order:', error);
-    
-    /*res.status(500).json({
-      status: 'error',
-      message: 'An internal error occurred. Please try again later.',
-      error: error.message,
-    });*/
     res.redirect(`/service/${service_id}/${business_id}`);
-    
   }
 });
+
+
 
   app.get('/logout', (req, res) =>{
     req.session.destroy();
@@ -401,7 +437,7 @@ app.get('/addbusiness',(req, res) => {
       console.log(`Order Items for Order ID ${order.order_id}:`, order.items);
     }
 
-    res.render('pages/profile', { orders: orderDetails });
+    res.render('pages/profile', {user: user, orders: orderDetails });
   } catch (error) {
     console.error('Error fetching order details:', error);
     res.status(500).json({

@@ -164,7 +164,9 @@ section.active .overlay{
   height: 150px;
   object-fit: cover;
 }
+
 /*
+
 .card-overlay {
   position: absolute;
   top: 0;
@@ -176,9 +178,10 @@ section.active .overlay{
   border-top-left-radius: 8px; /* Optional: Add rounded corners to the overlay 
   border-top-right-radius: 8px;
 }
-*/
 
-/*.card-body {
+
+
+.card-body {
   position: relative;
   background-color: rgba(255, 255, 255, 0.7); /*Adjust the alpha for transparency
 }
@@ -203,4 +206,12 @@ section.active .overlay{
   padding: 10px 15px;
 }
 
+/*
+.order-details {
+  display: none;
+}
 
+.order-row.active .order-details {
+  display: block;
+}
+*/
