@@ -3,7 +3,6 @@
 INSERT INTO users (username, password) VALUES 
   ('testuser', 'hashedpassword');
 
-
 -- Insert data into the business table
 INSERT INTO business (api_business_id, phone_number, name, hours, website, type, photo_url, address)
 VALUES
@@ -131,25 +130,20 @@ INSERT INTO services (name, description, cost, type, logo_url) VALUES
     ('Remodeling and Renovation', 'Assisting with plumbing needs during home or commercial property renovations and remodeling projects.', 50000, 'Plumber', 'https://theplumberheatingandcooling.com/wp-content/uploads/2021/05/Home-Remodeling-Renovation-Projects-that-Require-a-Plumber-Edit.jpg'),
     ('Maintenance Contracts', 'Offering regular maintenance services to ensure the ongoing health and efficiency of plumbing systems.', 100, 'Plumber', 'https://www.callhamilton.com/media/a0wp10kj/adobestock_38444064.jpeg?width=550&format=webp');
 
+INSERT INTO business_to_service (business_id, service_id) VALUES
+    (1,1),
+    (1,2),
+    (1,3),
+    (1,4),
+    (1,5),
+    (1,6),
+    (1,7),
+    (1,8),
+    (1,9),
+    (1,10),
+    (1,11),
+    (1,12),
+    (1,13),
+    (1,14),
+    (1,15);
 
-/*-- Insert data into the payments table
-  INSERT INTO payments (user_id, service_id, payment_amount, payment_status) VALUES
-    (1, 1, 50.00, 'Paid'),
-//  (1, 2, 75.00, 'Paid');
-//
-//-- Insert data into the order_details table
-//INSERT INTO order_details (user_id, payment_id, total) VALUES
-//  (1, 1, 50.00),
-//  (1, 2, 75.00);
-//
-//-- Insert data into the order_items table
-//INSERT INTO order_items (order_id, service_id, quantity, total) VALUES
-//  (1, 1, 2, 20.00),
-//  (1, 2, 1, 30.00),
-//  (2, 1, 3, 45.00);
-*/
-
-
-
---INSERT INTO business_to_service () VALUES
---    (),
