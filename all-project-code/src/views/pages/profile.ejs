@@ -8,16 +8,15 @@
         <img src="/images/profile-avatar.png" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
       <div>
-        <h2>JohnIsHere</h2>
-        <p>Name: John Deen</p>
-        <p>Email: john@example.com</p>
+        <h2><%=user.username %></h2>
+        <p>Thanks for using Boulder's List</p>
       </div>
     </div>
 
     <div class="order-summary-box">
-      <p><b>Total Orders: 1</b></p>
+      <p><b>Total Orders: <%= orders.length %> </b></p>
+      <p><b>Pending (<%=orders.length %>) </b></p>
       <p><b>Paid (0) </b></p>
-      <p><b>Shipped (1) </b></p>
       <p><b>Completed (0) </b></p>
     </div>
   </section>
@@ -44,10 +43,12 @@
           </tr>
           <tr class="order-details" data-order-id="<%= order.order_id %>" style="display: none;">
             <td colspan="4">
-              <p><b>Business:</b> <%= order.name %></p>
-              <p><b>Service:</b> <%= order.service_name %></p>
+              <p><b>Business:</b> <%= order.realname %></p>
+              <p><b>Service:</b> <%= order.businessname %></p>
+              <p><b>Description:</b> <%= order.servicedesc %></p>
+              <!--<p><b>Service:</b> <%= order.service_name %></p>
               <p><b>Description:</b> <%= order.description %></p>
-              <!-- Add more details as needed -->
+              Add more details as needed -->
             </td>
           </tr>
         <% } %>
