@@ -23,27 +23,57 @@
         </select>
       </div>
 
-  <div class="col-md-9">
-    <div class="row row-cols0 row-cols-md-2 g-4">
-      <% businesses.forEach(function(business) { %>
-	<div class="col">
-	  <div class="card h-99" data-id="<%- business.business_id %>" onclick="">
-	    <!-- Display first photo, ensure your API returns an array even if it's one photo -->
-	    <%  if(business.photo_url) { %>
-	      <img src="<%- business.photo_url[0] %>" class="card-img-top" alt="<%- business.name %>">
-	    <%  } %>
-	    <div class="card-body">
-	      <h6 class="card-title"><%- business.name %></h5>
-	      <p class="card-text">Type: <%- business.type %> | Phone: <%- business.phone_number %></p>
-	    </div>
-	    <div class="card-footer">
-	      <small class="text-muted"><%- business.address %></small>
-	    </div>
-	  </div>
-	</div>
-      <% }); %>
-    </div>
+
+<div class="col-md-9">
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    <% businesses.forEach(function(business) { %>
+      <div class="col entire-card">
+        <div class="card h-100" data-id="<%- business.business_id %>" onclick="">
+          <% if (business.photo_url) { %>
+            <div class="card-img-container">
+              <img src="<%= business.photo_url %>" class="card-img-top" alt="<%- business.name %>">
+            </div>
+          <% } else if (business.type == 'Plumber') { %>
+            <div class="card-img-container">
+              <img src="https://www.constantcontact.com/blog/wp-content/uploads/2022/01/Social-Start-a-Plumbing-Business.jpg" class="card-img-top" alt="Plumber Image">
+            </div>
+          <% } else if (business.type == 'Landscaper') { %>
+            <div class="card-img-container">
+              <img src="https://www.youraspire.com/hubfs/big-garden-grass-field-mowing-by-caucasian-gardener.jpg_s=1024x1024&w=is&k=20&c=ln0D2ZTNy8nc-t5zeXecdXi_VlojH5HC3PrNmG9fqX8=.jpg" class="card-img-top" alt="Landscaper Image">
+            </div>
+          <% } else if (business.type == 'Roofing') { %>
+            <div class="card-img-container">
+              <img src="https://peakbusinessvaluation.com/wp-content/uploads/Valuing-a-Roofing-Company.png" class="card-img-top" alt="Roofing Image">
+            </div>
+          <% } else if (business.type == 'Electrician') { %>
+            <div class="card-img-container">
+              <img src="https://www.levelset.com/wp-content/uploads/2022/07/Grow-my-Electrician-Business.jpg" class="card-img-top" alt="Electrician Image">
+            </div>
+          <% } else if (business.type == 'Painter') { %>
+            <div class="card-img-container">
+              <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freshbooks.com%2Fhub%2Fstartup%2Fhow-to-start-a-successful-painting-business&psig=AOvVaw3QA9u22ZI5wC6k5vzhL_P8&ust=1701755017487000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNCT4syJ9YIDFQAAAAAdAAAAABAI" class="card-img-top" alt="Painter Image">
+            </div>
+          <% } %>
+
+          <div class="card-overlay"></div>
+
+          <div class="card-body">
+            <h6 class="card-title"><%- business.name %></h6>
+            <p class="card-text">Type: <%- business.type %> | Phone: <%- business.phone_number %></p>
+          </div>
+
+          <div class="card-footer">
+            <small class="text-muted"><%- business.address %></small>
+          </div>
+        </div>
+      </div>
+    <% }); %>
   </div>
+</div>
+
+
+
+
 
     </div>
   </div>
