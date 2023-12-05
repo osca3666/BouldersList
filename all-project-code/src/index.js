@@ -174,17 +174,19 @@ app.post('/add-service', async (req, res) => {
 
 app.get('/business-profile/:id', async (req, res) => {
   try{
-    const b_id = req.params.id;
-    const serviceQuery = 'SELECT * FROM services';
-    const services = await db.any(serviceQuery);
+    const api_b_id = req.params.id;
     const reviewsQuery = 'SELECT * FROM review WHERE business_id = 1';
     const reviews = await db.any(reviewsQuery/*, [b_id]*/);
     const businessQuery = 'SELECT * FROM business WHERE api_business_id = $1';
-    const business_data = await db.any(businessQuery, b_id);
-    console.log(business_data);
+    const business_data = await db.any(businessQuery, api_b_id);
+  
+    const idQuery = 'SELECT business_id FROM business WHERE api_business_id = $1'
+    const b_id = await db.any(idQuery, api_b_id);
+    const serviceQuery = 'SELECT * FROM services WHERE services.service_id in (SELECT service_id FROM business_to_service WHERE business_id = $1)';
+    const service_data = await db.any(serviceQuery,b_id[0].business_id);
 
     res.render('pages/business', {
-      service: services,
+      service: service_data,
       reviews: reviews,
       business: business_data
     });
@@ -197,41 +199,19 @@ app.get('/business-profile/:id', async (req, res) => {
       error: 'Failed to fetch data'
     });
   }
-  
-  /*const options = {
-    method: 'GET',
-    url: 'https://local-business-data.p.rapidapi.com/business-details',
-    params: {
-      business_id: b_id,
-      extract_emails_and_contacts: 'true',
-      extract_share_link: 'false',
-      region: 'us',
-      language: 'en'
-    },
-    headers: {
-      'X-RapidAPI-Key': '3490d02908mshfab60b5b1bf7544p19f4c1jsn88730d40dea6',
-      'X-RapidAPI-Host': 'local-business-data.p.rapidapi.com'
-    }
-  };
-
-  try {
-    const results = await axios.request(options);
-    console.log(results.data);
-    res.render('pages/business', {results, serv});
-  } catch(error) {
-    console.log(error);
-    res.render('pages/business', { events: [], error: 'Failed to fetch local businesses' });
-  }*/
 });
 
-app.get('/service/:id', (req, res) => {
+app.get('/service/:s_id/:b_id', (req, res) => {
 
-  const s_id = req.params.id;
+  const s_id = req.params.s_id;
+  const b_id = req.params.b_id;
   const query = 'SELECT * FROM services WHERE service_id = $1';
   db.one(query, [s_id])
     .then((data) => {
-      console.log(data);
-      res.render('pages/service', {data});
+      res.render('pages/service', {
+        service: data,
+        business_id: b_id
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -251,14 +231,20 @@ app.get('/service/:id', (req, res) => {
 
 
   app.post('/place-order', async (req, res) => {
+    const business_id = req.body.b_id;
+    const service_id = req.body.s_id;
+    const details = req.body.details;
+
     try {
     const user = req.session.user;
-    const { service_id, quantity } = req.body;
+
     // Fetch service details based on service_id
     const serviceDetails = await db.one('SELECT * FROM services WHERE service_id = $1', [service_id]);
 
     // If the service does not exist, insert it
-    if (!serviceDetails) {
+
+    //commented out by Jon
+    /*if (!serviceDetails) {
       const { name, description, cost } = req.body;
 
       // Insert the service into the services table
@@ -267,36 +253,39 @@ app.get('/service/:id', (req, res) => {
 
       // Update serviceDetails with the newly inserted service
       serviceDetails = { ...req.body, service_id: serviceInsertResult.service_id };
-    }
-
-    console.log('Quantity:', quantity);
-    console.log('Service Cost:', serviceDetails.cost);
+    }*/
 
     // Calculate total based on quantity and service cost
-    const total = quantity * serviceDetails.cost;
+    const total = serviceDetails.cost;
 
     // Insert order details
     const orderDetailsQuery = 'INSERT INTO order_details (user_id, total, status) VALUES ($1, $2, $3) RETURNING order_id;';
     const orderInsertResult = await db.one(orderDetailsQuery, [user.id, total, 'Pending']);
-   console.log('User:', user);
-   console.log('User:', user.id);
+    console.log(orderInsertResult);
     // Insert order items
-    const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
+    /*const orderItemsQuery = 'INSERT INTO order_items (order_id, service_id, quantity, total) VALUES ($1, $2, $3, $4);';
     const itemTotal = quantity * serviceDetails.cost;
     await db.none(orderItemsQuery, [orderInsertResult.order_id, serviceDetails.service_id, quantity, itemTotal]);
-
-    res.status(200).json({
+    */
+    
+    /*res.status(200).json({
       status: 'success',
       message: 'Order placed successfully.',
       order: orderInsertResult,
+    });*/
+    res.render('pages/service', {
+      service: serviceDetails,
+      business_id: business_id
     });
   } catch (error) {
     console.error('Error placing order:', error);
+    res.render('pages/discover');
     res.status(500).json({
       status: 'error',
       message: 'An internal error occurred. Please try again later.',
       error: error.message,
     });
+    
   }
 });
 
