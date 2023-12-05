@@ -86,11 +86,24 @@ function getRatingFromCard(cardElement) {
 }
 
 function updateBusinessType() {
+  // Get the selected business type from the dropdown
   const selectedType = document.getElementById('businessType').value;
 
   // Update the URL
   const currentUrl = new URL(window.location.href);
   currentUrl.searchParams.set('businessType', selectedType === 'all' ? '' : selectedType);
   window.location.href = currentUrl.toString();
+
+  // Update the dropdown menu to reflect the selected business type
+  const dropdown = document.getElementById('businessType');
+
+  // Set the selected option in the dropdown
+  const options = dropdown.options;
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].value === selectedType) {
+      dropdown.selectedIndex = i;
+      break;
+    }
+  }
 }
 
