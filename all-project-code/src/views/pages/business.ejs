@@ -103,9 +103,10 @@
   <h3>User Reviews</h3>
   <% if (reviews && reviews.length > 0) { %>
       <% reviews.forEach(function(review) { %>
-          <div class="card mb-2">
+          <div class="card mb-2 review-card">
               <div class="card-body">
                   <h5 class="card-title">Rating: <%= review.rating %> Stars</h5>
+                  <p class="card-text"><strong>Review by:</strong> <%= review.username %></p>
                   <p class="card-text"><%= review.review_text %></p>
               </div>
           </div>
