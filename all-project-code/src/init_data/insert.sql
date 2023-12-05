@@ -130,7 +130,6 @@ INSERT INTO services (name, description, cost, type, logo_url) VALUES
     ('Remodeling and Renovation', 'Assisting with plumbing needs during home or commercial property renovations and remodeling projects.', 50000, 'Plumber', 'https://theplumberheatingandcooling.com/wp-content/uploads/2021/05/Home-Remodeling-Renovation-Projects-that-Require-a-Plumber-Edit.jpg'),
     ('Maintenance Contracts', 'Offering regular maintenance services to ensure the ongoing health and efficiency of plumbing systems.', 100, 'Plumber', 'https://www.callhamilton.com/media/a0wp10kj/adobestock_38444064.jpeg?width=550&format=webp');
 
-
 INSERT INTO business_to_service (business_id, service_id) VALUES
     (1,1),
     (1,2),
@@ -147,3 +146,4 @@ INSERT INTO business_to_service (business_id, service_id) VALUES
     (1,13),
     (1,14),
     (1,15);
+

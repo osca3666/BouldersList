@@ -123,3 +123,45 @@ section.active .overlay{
 .hide{
   opacity:0;
 }
+
+.pagination {
+  display: flex;
+  list-style: none;
+}
+
+.pagination a {
+  margin: 0 5px;
+  padding: 5px 10px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.pagination a.active {
+  background-color: #007bff;
+  color: #fff;
+  border: 1px solid #007bff;
+}
+
+
+.card {
+margin-bottom: 17px; /* Add space between cards */
+box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1); /* Add a subtle shadow effect */
+border: 1px solid #ddd; /* Add a border */
+border-radius: 8px; /* Optional: Add rounded corners */
+}
+
+.card-img-top {
+height: 150px;
+object-fit: cover;
+border-top-left-radius: 8px; /* Optional: Add rounded corners to the image */
+border-top-right-radius: 8px;
+}
+
+.card-body {
+padding: 15px;
+}
+
+.card-footer {
+padding: 10px 15px;
+}
