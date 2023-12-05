@@ -11,7 +11,8 @@ CREATE TABLE business(
   business_id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   phone_number VARCHAR(10),
-  description VARCHAR(200) NOT NULL
+  description VARCHAR(200) NOT NULL,
+  image VARCHAR(255)
 );
 
 DROP TABLE IF EXISTS services CASCADE;
