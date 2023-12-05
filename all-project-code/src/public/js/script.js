@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Card click event listeners
-  const cards = document.querySelectorAll('div.card');
+  const cards = document.querySelectorAll('div.card.h-100');
   cards.forEach(card => {
     card.addEventListener('click', function() {
       const businessId = this.getAttribute('data-id');

@@ -27,7 +27,7 @@
         </div>
         <br><br><br>
         <div class="text-center">
-            <h2>Discover top-rated services in your area.</h2>
+            <h2><b>Discover top-rated services in your area.</b></h2>
             <br>
             <% for(let i = 0; i < 3; i++){ %>
                 <div class="col entire-card">
@@ -60,15 +60,15 @@
           
                     <div class="card-overlay"></div>
                     <br><br><br>
-                    <div class="card-body">
+                    <div class="card-body disc">
                       <h6 class="card-title"><%- business[i].name %></h6>
-                      <p class="card-text">Type: <%- business[i].type %> | Phone: <%- business[i].phone_number %></p>
-                      <small class="text-muted"><%- business[i].address %></small>
-                    </div>
-          
-                    <div class="card-footer">
+                      <p class="card-text">Type: <%- business[i].type %> | Phone: <%- business[i].phone_number %> | Rating: <%- business[i].rating %></p>
                       <br>
                     </div>
+        
+                    <div class="card-footer disc">
+                        <small class="text-muted"><%- business[i].address %></small>
+                      </div>
                   </div>
                 </div>
               <% }%>

@@ -2,8 +2,12 @@
 <%- include ('../partials/menu') %>
 <%- include ('../partials/message') %>
 
-<div class="container text-center">
-    <h1><%=service.name%></h1>
+<div class="container">
+    <form action="/business-profile/<%=business_id%>">
+        <button class="back text-left btn-sm">Back</button>
+    </form>
+    
+    <h1 class="text-center"><%=service.name%></h1>
     <br>
     <br>
     <div class="row user-info-box">

@@ -128,22 +128,46 @@ INSERT INTO services (name, description, cost, type, logo_url) VALUES
     ('Plumbing Inspections', 'Conducting routine inspections of plumbing systems to identify potential issues before they become major problems.', 200, 'Plumber', 'https://www.ecodocspro.com/wp-content/uploads/2020/10/Plumbing-Inspection.jpg'),
     ('Commercial Plumbing Services', 'Providing plumbing services for commercial properties, including office buildings, restaurants, and industrial facilities.', 10000, 'Plumber', 'https://www.planetplumbinganddrain.com/wp-content/uploads/2018/06/header-commercial-plumbing.jpg'),
     ('Remodeling and Renovation', 'Assisting with plumbing needs during home or commercial property renovations and remodeling projects.', 50000, 'Plumber', 'https://theplumberheatingandcooling.com/wp-content/uploads/2021/05/Home-Remodeling-Renovation-Projects-that-Require-a-Plumber-Edit.jpg'),
-    ('Maintenance Contracts', 'Offering regular maintenance services to ensure the ongoing health and efficiency of plumbing systems.', 100, 'Plumber', 'https://www.callhamilton.com/media/a0wp10kj/adobestock_38444064.jpeg?width=550&format=webp');
+    ('Maintenance Contracts', 'Offering regular maintenance services to ensure the ongoing health and efficiency of plumbing systems.', 100, 'Plumber', 'https://www.callhamilton.com/media/a0wp10kj/adobestock_38444064.jpeg?width=550&format=webp'),
+    --landscaping
+    ('Lawn Care', 'Keep your grass pristine with regular mowing, precise edging, and expert trimming.', 100, 'Landscaper', 'https://cdnassets.stihlusa.com/1632165150-fs56rceact2002.jpg?fit=crop&h=554&w=984'),
+    ('Landscape Design', 'Transform your outdoor space with a thoughtfully planned design, carefully selecting and placing plants and hardscape elements.', 2500, 'Landscaper', 'https://ecoscapedesign.com/wp-content/uploads/2015/02/Backyard-wide-view-cropped-1440-pix-wide.EK_.-2600x1100_c.jpg'),
+    ('Planting and Installation', 'Enhance your landscape with lush greenery, from trees and shrubs to vibrant flowers, and install fresh sod or mulch for a polished finish.', 2000, 'Landscaper', 'https://www.greenerhorizon.com/wp-content/uploads/2014/07/IMG_2009_web.jpg'),
+    ('Irrigation System Installation and Repair', 'Ensure your plants receive the right amount of water with expertly designed irrigation systems, including installation and repair services.', 5000, 'Landscaper', 'https://boulderlanddesign.com/wp-content/uploads/2021/04/Depositphotos_42546585_xl-2015-2-scaled-1.jpg'),
+    ('Hardscaping', 'Elevate your outdoor living with stylish pathways, driveways, patios, decks, and retaining walls, creating a functional and beautiful space.', 10000, 'Landscaper', 'https://greenhaveninc.com/wp-content/uploads/2019/02/12491867014_8728d1eb3d_h-1080x675.jpg'),
+    ('Landscape Lighting', 'Illuminate your landscape\''s beauty and enhance safety with strategically placed outdoor lighting installations.', 1000, 'Landscaper', 'https://i0.wp.com/community.tucson.com/wp-content/uploads/2022/03/monsoon-irrigation-and-landscape-lighting-tucsonV8.jpg?fit=1533%2C1030&ssl=1'),
+    ('Landscape Maintenance', 'Keep your outdoor space in top shape with regular maintenance, including plant pruning, trimming, and weed control.', 250, 'Landscaper', 'https://www.simple-solutions.ca/wp-content/uploads/2020/02/what-is-landscape-maintenance-what-are-its-benefits-f.jpg'),
+    ('Landscape Renovation', 'Revitalize your existing landscape with upgrades and enhancements, breathing new life into outdated or overgrown spaces.', 5000, 'Landscaper', 'https://landscape-solutions.net/wp-content/uploads/Newly-Laid-Sod.jpg'),
+    ('Seasonal Cleanup', 'Prepare for each season with thorough cleanup services, from leaf removal to debris cleanup.', 500, 'Landscaper', 'https://images.squarespace-cdn.com/content/v1/610dd76294c5a42a599f747f/67b2319c-436c-4f3f-8b26-06fa283d690b/IMG-3584.jpg'),
+    ('Grading and Drainage', 'Improve soil grading for effective drainage, and install solutions to prevent water pooling and ensure proper water flow.', 2500, 'Landscaper', 'https://www.terra-firmalandscape.com/wp-content/uploads/2013/11/french-drain-installation.jpg'),
+    ('Tree Care', 'Maintain the health and appearance of your trees through expert pruning, trimming, removal, and stump grinding.', 250, 'Landscaper', 'https://www.landscapingsanantonio.net/uploads/1/2/6/7/126776146/san-antonio-landscaping-tree-care-2_1_orig.jpg'),
+    ('Lawn Fertilization and Weed Control', 'Promote healthy grass growth with fertilization, and keep your lawn weed-free with effective prevention and control measures.', 150, 'Landscaper', 'https://d163axztg8am2h.cloudfront.net/static/img/44/22/c807459e1f619ae854b4f5a5374e.webp'),
+    ('Snow Removal', 'Stay safe during winter with prompt snow and ice removal from driveways, walkways, and other outdoor spaces.', 150, 'Landscaper', 'https://hips.hearstapps.com/hmg-prod/images/residents-dig-themselves-out-after-a-massive-snowstorm-hit-news-photo-1579300505.jpg'),
+    ('Consultation and Planning', 'Receive expert guidance and comprehensive plans for your landscaping projects, ensuring successful and beautiful results.', 100, 'Landscaper', 'https://images.squarespace-cdn.com/content/v1/5d0a8ca3dd07450001fe38bb/1564577600775-0294ZXGWU4M2SOD8B24G/image-asset.jpeg'),
+    ('Drought-Tolerant Landscaping', 'Create sustainable and water-efficient landscapes with xeriscaping techniques and designs that thrive with less water.', 5000, 'Landscaper', 'https://www.harborbay.org/wp-content/uploads/2017/06/5.jpg');
 
 INSERT INTO business_to_service (business_id, service_id) VALUES
-    (1,1),
-    (1,2),
-    (1,3),
-    (1,4),
-    (1,5),
-    (1,6),
-    (1,7),
-    (1,8),
-    (1,9),
-    (1,10),
-    (1,11),
-    (1,12),
-    (1,13),
-    (1,14),
-    (1,15);
+    (1, 1), (2, 4), (3, 10), (4, 5), (5, 8), (6, 11), (7, 2), (8, 6), (9, 9), (10, 3),
+(11, 7), (12, 12), (13, 14), (14, 1), (15, 13), (16, 15), (17, 10), (18, 3), (19, 7), (20, 12),
+(1, 8), (2, 14), (3, 7), (4, 11), (5, 4), (6, 13), (7, 3), (8, 9), (9, 5), (10, 6),
+(11, 2), (12, 15), (13, 1), (14, 12), (15, 10), (16, 13), (17, 8), (18, 6), (19, 14), (20, 4),
+(1, 13), (2, 10), (3, 4), (4, 12), (5, 3), (6, 7), (7, 9), (8, 2), (9, 15), (10, 1),
+(11, 11), (12, 14), (13, 6), (14, 8), (15, 5), (16, 10), (17, 1), (18, 12), (19, 3), (20, 9),
+(1, 3), (2, 7), (3, 15), (4, 2), (5, 10), (6, 1), (7, 11), (8, 5), (9, 12), (10, 8),
+(11, 13), (12, 9), (13, 14), (14, 6), (15, 4), (16, 7), (17, 2), (18, 11), (19, 1), (20, 5),
+(1, 6), (2, 5), (3, 8), (4, 14), (5, 1), (6, 12), (7, 10), (8, 3), (9, 4), (10, 11),
+(11, 15), (12, 2), (13, 9), (14, 7), (15, 13), (16, 6), (17, 12), (18, 1), (19, 5), (20, 8),
+
+(24, 26), (40, 20), (38, 29), (33, 28), (21, 30), (39, 17), (35, 22), (32, 25), (34, 19), (29, 27),
+(30, 18), (28, 24), (37, 26), (26, 21), (25, 29), (36, 16), (23, 30), (22, 17), (40, 27), (39, 20),
+(38, 28), (37, 29), (36, 30), (35, 18), (34, 16), (33, 22), (32, 23), (31, 28), (30, 26), (29, 24),
+(28, 19), (27, 17), (26, 30), (25, 20), (24, 27), (23, 29), (22, 25), (21, 16), (40, 23), (39, 28),
+(38, 18), (37, 27), (36, 22), (35, 19), (34, 26), (33, 25), (32, 29), (31, 24), (30, 17), (29, 30),
+(28, 20), (27, 16), (26, 24), (25, 22), (24, 19), (23, 26), (22, 28), (21, 25), (40, 30), (39, 16),
+(38, 24), (37, 22), (36, 19), (35, 30), (34, 29), (33, 27), (32, 20), (31, 16), (30, 28), (29, 25),
+(28, 18), (27, 30), (26, 16), (25, 24), (24, 22), (23, 17), (22, 26), (21, 29), (40, 25), (39, 22),
+(38, 30), (37, 19), (36, 28), (35, 16), (34, 24), (33, 26), (32, 27), (31, 30), (30, 22), (29, 19),
+(28, 30), (27, 25), (26, 19), (25, 18), (24, 16), (23, 22), (22, 29), (21, 27);
+
+
 
