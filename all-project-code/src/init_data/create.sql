@@ -16,7 +16,9 @@ CREATE TABLE business(
   website VARCHAR(200),
   type VARCHAR(50),
   photo_url VARCHAR(200),
-  address VARCHAR(200)
+  address VARCHAR(200),
+  rating DECIMAL,
+  num_ratings INT
 );
 
 DROP TABLE IF EXISTS services CASCADE;
