@@ -175,8 +175,7 @@ app.post('/add-service', async (req, res) => {
 app.get('/business-profile/:id', async (req, res) => {
   try{
     const api_b_id = req.params.id;
-    const reviewsQuery = 'SELECT * FROM review WHERE business_id = 1';
-    const reviews = await db.any(reviewsQuery/*, [b_id]*/);
+    
     const businessQuery = 'SELECT * FROM business WHERE api_business_id = $1';
     const business_data = await db.any(businessQuery, api_b_id);
   
@@ -184,6 +183,8 @@ app.get('/business-profile/:id', async (req, res) => {
     const b_id = await db.any(idQuery, api_b_id);
     const serviceQuery = 'SELECT * FROM services WHERE services.service_id in (SELECT service_id FROM business_to_service WHERE business_id = $1)';
     const service_data = await db.any(serviceQuery,b_id[0].business_id);
+    const reviewsQuery = 'SELECT * FROM review WHERE business_id = $1';
+    const reviews = await db.any(reviewsQuery,b_id);
 
     res.render('pages/business', {
       service: service_data,
