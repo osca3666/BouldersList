@@ -24,11 +24,11 @@ CREATE TABLE business(
 DROP TABLE IF EXISTS services CASCADE;
 CREATE TABLE services(
   service_id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
-  description VARCHAR(200) NOT NULL,
+  name VARCHAR(50) UNIQUE NOT NULL,
+  description VARCHAR(300) NOT NULL,
   cost INTEGER NOT NULL,
   type VARCHAR(50),
-  logo_url VARCHAR(200)
+  logo_url VARCHAR(300)
 );
 
 DROP TABLE IF EXISTS payments CASCADE;
@@ -43,7 +43,11 @@ CREATE TABLE payments(
 
 DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
-    order_id SERIAL PRIMARY KEY, 
+    order_id SERIAL PRIMARY KEY,
+    business_id INTEGER REFERENCES business(business_id),
+    realname VARCHAR(50) NOT NULL,
+    businessname VARCHAR(50) REFERENCES services(name),
+    servicedesc VARCHAR(200) NOT NULL,
     user_id INTEGER REFERENCES users(user_id),
     payment_id INTEGER REFERENCES payments(payment_id),
     total DECIMAL,

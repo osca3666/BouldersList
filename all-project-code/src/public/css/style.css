@@ -84,6 +84,17 @@ button.book{
   right:25%;
   bottom:5%;
 }
+button.back{
+  color: #ffffff;
+  padding: 14px 22px;
+  border: none;
+  background: #000000;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  
+}
 .modal-box{
   position: absolute;
   left: 50%;
@@ -108,14 +119,14 @@ section.active .modal-box{
 section.active .show-booking {
   display: none;
 }
-.overlay{
+/*.overlay{
   position:absolute;
   height: 100%;
   width: 100%;
   background: rgba(0,0,0,0.3);
   opacity: 1;
   pointer-events: none;
-}
+}*/
 section.active .overlay{
   opacity: 1;
   pointer-events: auto;
@@ -147,7 +158,7 @@ section.active .overlay{
   margin-bottom: 10px;
 }
 
-.card {
+.card.h-100 {
   position: relative;
   margin-bottom: 50px; /* Add space between cards */
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1); /* Add a subtle shadow effect */
@@ -188,7 +199,7 @@ section.active .overlay{
 */
 
 
-.card-body {
+.card-body.disc {
   position: absolute;
   top: 0;
   left: 0;
@@ -212,7 +223,6 @@ section.active .overlay{
   margin-bottom: 2px; /* Reduce space between paragraphs */
   font-size: 0.9rem; /* Adjust text font size if needed */
 }
-
 
 .card-footer {
   padding: 10px 15px;
