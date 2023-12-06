@@ -96,9 +96,49 @@
     </div>
     <%}%>
 </div>
-<div class="container mt-4 text-center">
-  <a href="/submit-review?businessId=<%=business[0].business_id %>" class="btn btn-primary">Add Review</a>
+<!-- Trigger Modal Button -->
+<div class="container text-center mt-4">
+  <div class="d-flex justify-content-center">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+      Add Review
+    </button>
+  </div>
 </div>
+
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="/submit-review" method="post" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reviewModalLabel">Add Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="X"></button>
+      </div>      
+      <div class="modal-body">
+        <input type="hidden" name="businessId" value="<%= business[0].business_id %>">
+        <label for="name">Name:</label> 
+        <input type="text" id="name" name="name" class="form-control"> 
+        <br>  
+        <input type="hidden" id="ratingValue" name="rating" value="">
+        <div id='rating' class="mb-3">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <label for="reviewText">Review:</label> 
+        <textarea id="data" cols="40" rows="5" name="reviewText" class="form-control" onkeyup="countChars(this);"></textarea>
+        <p id="charNum">200 characters remaining</p> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" value="Submit Review" class="btn btn-primary"> 
+      </div>
+    </form>
+  </div>
+</div>
+
 <br>
 <div class="container mt-4">
   <h2>User Reviews</h2>

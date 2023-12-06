@@ -67,17 +67,38 @@ function countChars(obj){
 }
 
 function sortCards(sortType) {
+  if (sortType === "") {
+    // Do not sort if the default option is selected
+    return;
+  }
   const cardsContainer = document.querySelector('.row.row-cols-1.row-cols-md-2.g-4');
   let cards = document.querySelectorAll('.col');
 
   cards = Array.from(cards).sort((a, b) => {
-    const ratingA = getRatingFromCard(a);
-    const ratingB = getRatingFromCard(b);
+    const ratingA = parseFloat(a.querySelector('.average-rating').textContent);
+    const ratingB = parseFloat(b.querySelector('.average-rating').textContent);
     return sortType === 'ratingDesc' ? ratingB - ratingA : ratingA - ratingB;
   });
 
   cards.forEach(card => cardsContainer.appendChild(card));
 }
+
+$(document).ready(function() {
+  if (window.location.pathname === '/discover') {
+    updateRatingsForBusinesses().then(() => {
+      // Optionally, you can trigger sorting right after ratings are updated.
+      // sortCards('ratingDesc'); // Uncomment if auto-sorting is desired after loading.
+    });
+  }
+
+  const sortSelect = document.getElementById('sortSelect');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      sortCards(this.value);
+    });
+  }
+});
+
 
 function getRatingFromCard(cardElement) {
   const ratingText = cardElement.querySelector('.card-text').textContent;
@@ -93,4 +114,42 @@ function updateBusinessType() {
   currentUrl.searchParams.set('businessType', selectedType === 'all' ? '' : selectedType);
   window.location.href = currentUrl.toString();
 }
+
+function updateRatingsForBusinesses() {
+  let promises = [];
+  $('.card').each(function() {
+    const card = $(this);
+    const businessId = card.data('id');
+
+    let request = $.get('/api/get-ratings', { business_id: businessId }, function(response) {
+      // Debugging: Log the response
+      console.log('Response for business ID ' + businessId + ':', response);
+
+      // Check if response contains the averageRating property
+      if (response && response.hasOwnProperty('averageRating')) {
+        let averageRating = parseFloat(response.averageRating);
+        if (!isNaN(averageRating)) {
+          card.find('.average-rating').text(averageRating.toFixed(1) + ' / 5');
+        } else {
+          card.find('.average-rating').text('Rating unavailable');
+        }
+      } else {
+        console.error('Average rating not found in response for business ID ' + businessId);
+        card.find('.average-rating').text('Rating unavailable');
+      }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      console.error('Failed to fetch rating for business ID ' + businessId + ':', textStatus, errorThrown);
+      card.find('.average-rating').text('Rating unavailable');
+    });
+    promises.push(request);
+  });
+  return Promise.all(promises);
+}
+
+// $(document).ready(function() {
+//   if (window.location.pathname === '/discover') {
+//     updateRatingsForBusinesses();
+//   }
+// });
+
 
