@@ -210,7 +210,7 @@ section.active .overlay{
   justify-content: flex-end;
   padding: 10px; /* Adjusted padding for better spacing */
   box-sizing: border-box;
-  background-color: rgba(255, 255, 255, 0.7); /* Adjust the alpha for transparency */
+  background-color: rgba(255, 255, 255, 0); /* Adjust the alpha for transparency */
   overflow: hidden; /* Hide overflow */
 }
 
