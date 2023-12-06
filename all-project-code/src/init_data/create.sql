@@ -43,7 +43,11 @@ CREATE TABLE payments(
 
 DROP TABLE IF EXISTS order_details CASCADE;
 CREATE TABLE order_details(
-    order_id SERIAL PRIMARY KEY, 
+    order_id SERIAL PRIMARY KEY,
+    business_id INTEGER REFERENCES business(business_id),
+    realname VARCHAR(50) NOT NULL,
+    businessname VARCHAR(50) REFERENCES services(name),
+    servicedesc VARCHAR(200) NOT NULL,
     user_id INTEGER REFERENCES users(user_id),
     payment_id INTEGER REFERENCES payments(payment_id),
     total DECIMAL,
