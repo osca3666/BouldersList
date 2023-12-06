@@ -208,12 +208,23 @@ section.active .overlay{
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 15px;
+  padding: 10px; /* Adjusted padding for better spacing */
   box-sizing: border-box;
   background-color: rgba(255, 255, 255, 0.7); /* Adjust the alpha for transparency */
+  overflow: hidden; /* Hide overflow */
 }
 
-.card-footer.disc {
+.card-body h6.card-title {
+  margin-bottom: 5px; /* Reduce space below the title */
+  font-size: 1rem; /* Adjust title font size if needed */
+}
+
+.card-body p.card-text {
+  margin-bottom: 2px; /* Reduce space between paragraphs */
+  font-size: 0.9rem; /* Adjust text font size if needed */
+}
+
+.card-footer {
   padding: 10px 15px;
 }
 
@@ -226,3 +237,12 @@ section.active .overlay{
   display: block;
 }
 */
+
+.review-box {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+
