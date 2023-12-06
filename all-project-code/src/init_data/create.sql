@@ -25,10 +25,10 @@ DROP TABLE IF EXISTS services CASCADE;
 CREATE TABLE services(
   service_id SERIAL PRIMARY KEY,
   name VARCHAR(50) UNIQUE NOT NULL,
-  description VARCHAR(200) NOT NULL,
+  description VARCHAR(300) NOT NULL,
   cost INTEGER NOT NULL,
   type VARCHAR(50),
-  logo_url VARCHAR(200)
+  logo_url VARCHAR(300)
 );
 
 DROP TABLE IF EXISTS payments CASCADE;
