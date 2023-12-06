@@ -18,6 +18,7 @@
 
         <h4>Sort by</h4>
         <select id="sortSelect" class="form-select">
+          <option value="" selected>Select Sorting</option>
           <option value="ratingDesc">Rating: High to Low</option>
           <option value="ratingAsc">Rating: Low to High</option>
         </select>
@@ -60,11 +61,13 @@
           <div class="card-body">
             <h6 class="card-title"><%- business.name %></h6>
             <p class="card-text">Type: <%- business.type %> | Phone: <%- business.phone_number %></p>
+            <p class="card-text average-rating">Loading rating...</p>
           </div>
 
           <div class="card-footer">
             <small class="text-muted"><%- business.address %></small>
           </div>
+          
         </div>
       </div>
     <% }); %>

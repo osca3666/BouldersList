@@ -100,6 +100,9 @@ app.post('/register', async (req, res) => {
   }
 });
 
+app.get('/user-agreement', (req, res) => {
+  res.render('pages/user-agreement');
+});
 
 app.get('/login', (req, res) => {
   res.render('pages/login');
@@ -175,31 +178,26 @@ app.post('/add-service', async (req, res) => {
 
 
 app.get('/business-profile/:id', async (req, res) => {
-  try{
-    //const api_b_id = req.params.id;
+  try {
     const b_id = req.params.id;
-    //console.log(b_id);
     
     const businessQuery = 'SELECT * FROM business WHERE business_id = $1';
     const business_data = await db.any(businessQuery, b_id);
-    //console.log(business_data);
   
-    //const idQuery = 'SELECT business_id FROM business WHERE api_business_id = $1'
-    //const b_id = await db.any(idQuery, api_b_id);
-    
     const serviceQuery = 'SELECT * FROM services WHERE services.service_id in (SELECT service_id FROM business_to_service WHERE business_id = $1)';
-    const service_data = await db.any(serviceQuery,b_id);
-    const reviewsQuery = 'SELECT * FROM review WHERE business_id = $1';
-    const reviews = await db.any(reviewsQuery,b_id);
+    const service_data = await db.any(serviceQuery, b_id);
+
+    // Modified reviews query to include username
+    const reviewsQuery = 'SELECT r.*, u.username FROM review r INNER JOIN users u ON r.user_id = u.user_id WHERE r.business_id = $1';
+    const reviews = await db.any(reviewsQuery, b_id);
 
     res.render('pages/business', {
       service: service_data,
       reviews: reviews,
       business: business_data
     });
-  }catch (error) {
+  } catch (error) {
     console.error(error);
-    // Handle errors
     res.render('pages/business', {
       service: [],
       reviews: [],
@@ -207,6 +205,7 @@ app.get('/business-profile/:id', async (req, res) => {
     });
   }
 });
+
 
 app.get('/service/:s_id/:b_id', (req, res) => {
 
@@ -228,11 +227,6 @@ app.get('/service/:s_id/:b_id', (req, res) => {
 
   app.get('/home', (req,res) => {
     res.render('pages/home');
-  });
-
-
-  app.get('/user-agreement', (req, res) => {
-    res.render('pages/user-agreement');
   });
 
 
@@ -532,18 +526,27 @@ app.get('/get_reviews', (req, res) => {
       });
 });
 
-app.get('/get_ratings', (req, res) => {
-  const query = `SELECT rating FROM review WHERE rating BETWEEN 1 AND 5`;
+app.get('/api/get-ratings', async (req, res) => {
+  try {
+      const businessId = req.query.business_id;
+      if (!businessId) {
+          return res.status(400).json({ message: 'Business ID is required' });
+      }
 
-  db.any(query)
-      .then((data) => {
-          res.json(data);
-      })
-      .catch((err) => {
-          console.log(err);
-          res.status(500).send("Error occurred, failed to fetch ratings");
+      const query = `SELECT COALESCE(AVG(rating), 0) as avg_rating FROM review WHERE business_id = $1`;
+      const result = await db.one(query, [businessId]);
+
+      res.json({ averageRating: result.avg_rating });
+  } catch (error) {
+      console.error('Error fetching average rating:', error);
+      res.status(500).json({
+          status: 'error',
+          message: 'An internal error occurred. Please try again later.',
+          error: error.message,
       });
+  }
 });
+
 
 app.post('/submit-business', async (req, res) => {
   try {
