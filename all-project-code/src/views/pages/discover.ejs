@@ -3,8 +3,8 @@
 
 <main>
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-3">
+  <div class="row d-flex justify-content-center">
+    <div class="col-auto center-text">
 	<label for="businessType">Business Type:</label>
 	<select id="businessType" class="form-select" onchange="updateBusinessType()">
 	  <option value="all" selected>All Business Types</option>
@@ -14,22 +14,23 @@
 	  <option value="Electrician">Electrician</option>
 	  <option value="Painter">Painter</option>
 	</select>
-
-
-        <h4>Sort by</h4>
+   </div>
+    <div class="col-auto center-text">
+       	<label for="sortBy">Sort By:</label>
         <select id="sortSelect" class="form-select">
           <option value="" selected>Select Sorting</option>
           <option value="ratingDesc">Rating: High to Low</option>
           <option value="ratingAsc">Rating: Low to High</option>
         </select>
-      </div>
-
-
-<div class="col-md-9">
-  <div class="row row-cols-1 row-cols-md-2 g-4">
+</div>
+</div>
+	</div>
+<div class="row">
+<div class="col-md-11 mx-auto">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
     <% businesses.forEach(function(business) { %>
       <div class="col entire-card">
-        <div class="card h-100" data-id="<%- business.business_id %>" onclick="">
+        <div class="card h-100 custom-card" data-id="<%- business.business_id %>" onclick="">
           <% if (business.photo_url) { %>
             <div class="card-img-container">
               <img src="<%= business.photo_url %>" class="card-img-top" alt="<%- business.name %>">
@@ -81,11 +82,6 @@
 
     </div>
   </div>
-	<div class="pagination">
-	  <% for (let i = 1; i <= totalPages; i++) { %>
-	    <a href="/discover?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
-	  <% } %>
-	</div>
 </main>
 
 

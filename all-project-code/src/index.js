@@ -367,39 +367,70 @@ app.post('/place-order', async (req, res) => {
 
 
 
+//app.get('/discover', async (req, res) => {
+//  try {
+//    const page = req.query.page || 1;  // Get the page from query parameters
+//    const pageSize = 8;  // Number of businesses per page
+//
+//    // Fetch total number of businesses
+//    const totalBusinessesQuery = 'SELECT COUNT(*) FROM business';
+//    const totalBusinesses = await db.one(totalBusinessesQuery, [], (a) => +a.count);
+//
+//    // Calculate total pages
+//    const totalPages = Math.ceil(totalBusinesses / pageSize);
+//
+//    const offset = (page - 1) * pageSize;
+//
+//    // Retrieve selected business type filter
+//const businessTypeFilter = req.query.businessType || ''; // Assuming businessType is passed in the query
+//
+//// Modify the business query based on the filter
+//let businessQuery;
+//let businessQueryParams;
+//
+//if (businessTypeFilter) {
+//  businessQuery = 'SELECT * FROM business WHERE type = $1 LIMIT $2 OFFSET $3';
+//  businessQueryParams = [businessTypeFilter, pageSize, offset];
+//} else {
+//  businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
+//  businessQueryParams = [pageSize, offset];
+//}
+//
+//    const businesses = await db.any(businessQuery, businessQueryParams);
+//
+//    //console.log(businesses);  // Log the data to the console
+//    res.render('pages/discover', { businesses, currentPage: page, totalPages });
+//  } catch (error) {
+//    console.error('Error fetching businesses:', error);
+//    res.status(500).json({
+//      status: 'error',
+//      message: 'An internal error occurred. Please try again later.',
+//      error: error.message,
+//    });
+//  }
+//});
 app.get('/discover', async (req, res) => {
   try {
-    const page = req.query.page || 1;  // Get the page from query parameters
-    const pageSize = 8;  // Number of businesses per page
-
-    // Fetch total number of businesses
-    const totalBusinessesQuery = 'SELECT COUNT(*) FROM business';
-    const totalBusinesses = await db.one(totalBusinessesQuery, [], (a) => +a.count);
-
-    // Calculate total pages
-    const totalPages = Math.ceil(totalBusinesses / pageSize);
-
-    const offset = (page - 1) * pageSize;
-
     // Retrieve selected business type filter
-const businessTypeFilter = req.query.businessType || ''; // Assuming businessType is passed in the query
+    const businessTypeFilter = req.query.businessType || ''; // Assuming businessType is passed in the query
 
-// Modify the business query based on the filter
-let businessQuery;
-let businessQueryParams;
+    // Modify the business query based on the filter
+    let businessQuery;
+    let businessQueryParams;
 
-if (businessTypeFilter) {
-  businessQuery = 'SELECT * FROM business WHERE type = $1 LIMIT $2 OFFSET $3';
-  businessQueryParams = [businessTypeFilter, pageSize, offset];
-} else {
-  businessQuery = 'SELECT * FROM business LIMIT $1 OFFSET $2';
-  businessQueryParams = [pageSize, offset];
-}
+    if (businessTypeFilter) {
+      businessQuery = 'SELECT * FROM business WHERE type = $1';
+      businessQueryParams = [businessTypeFilter];
+    } else {
+      businessQuery = 'SELECT * FROM business';
+      businessQueryParams = [];
+    }
 
+    // Retrieve all businesses based on the filter
     const businesses = await db.any(businessQuery, businessQueryParams);
 
     //console.log(businesses);  // Log the data to the console
-    res.render('pages/discover', { businesses, currentPage: page, totalPages });
+    res.render('pages/discover', { businesses });
   } catch (error) {
     console.error('Error fetching businesses:', error);
     res.status(500).json({
