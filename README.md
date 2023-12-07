@@ -69,3 +69,7 @@ docker-compose down
 
 This command will stop and remove the containers, networks, and volumes created by `docker-compose up`. For composing down with flags, please check https://docs.docker.com/engine/reference/commandline/compose_down/ for more information.
 
+## Running the Application from Cloud
+http://recitation-13-team-06.eastus.cloudapp.azure.com:3000/discover
+(Down currently due to costs)
+
