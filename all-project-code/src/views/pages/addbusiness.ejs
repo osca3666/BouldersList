@@ -3,41 +3,35 @@
 
 <main>
   <div class="container">
-    <div class="form-container">
+    <div class="form-container text-center">
       <h1>Have a Local Business You Want to Upload?</h1>
-        <h2>Fill Out the Upload Form Below!</h2>
+        <h3>Fill Out the Upload Form Below!</h3>
 
-      <form action="/submit-business" method="POST">
+      <form class="" action="/submit-business" method="POST">
 
-        <div class="form-group">
+        <!--<div class="form-group">
           <label for="api_business_id">Business Api:</label>
           <input id="api_business_id" name="api_business_id" required>
-        </div>
+        </div>-->
 
         <div class="form-group">
           <label for="businessName">Business Name:</label>
           <input type="text" id="businessName" name="businessName" required>
         </div>
 
-       
-
-        <div class="form-group">
+        <!--<div class="form-group">
           <label for="businessType">Business Type:</label>
           <input id="businessType" name="businessType" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="businessImageURL">Business Image URL:</label>
-          <input type="url" id="businessImageURL" name="businessImageURL" required>
-        </div>
-        
+        </div>-->
 
-        <div class="form-group">
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</main>
-
-<%- include ('../partials/footer') %>
+        <div class ="mb-3" id="weekday">
+          <label for="businesstype" class="form-label">Type: </label>
+          <select class="form-select" aria-label="Default select example" id="businesstype">
+              <option selected>Open this select menu</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Landscaper">Landscaper</option>
+              <option value="Roofing">Roofing</option>
+              <option value="Electrician">Electrician</option>
+              <option value="Painting">Painting</option>                                  
+            </select>
+      </div>
