@@ -135,27 +135,9 @@ section.active .overlay{
   opacity:0;
 }
 
-.pagination {
-  display: flex;
-  list-style: none;
-}
-
-.pagination a {
-  margin: 0 5px;
-  padding: 5px 10px;
-  text-decoration: none;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-.pagination a.active {
-  background-color: #007bff;
-  color: #fff;
-  border: 1px solid #007bff;
-}
-
 .entire-card {
-  margin-bottom: 10px;
+  margin-bottom: 13px;
+
 }
 
 .card.h-100 {
@@ -245,4 +227,19 @@ section.active .overlay{
   border-radius: 5px;
 }
 
+    .custom-card {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    /* Hover effect to make the card slightly bigger on hover */
+    .custom-card:hover {
+      transform: scale(1.05);
+    }
+  .center-text {
+    text-align: center;
+  }
+.enlarged-card {
+  transform: scale(1.2);
+  transition: transform 0.3s ease-in-out; 
+}
 

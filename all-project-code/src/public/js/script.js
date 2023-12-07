@@ -48,7 +48,10 @@ document.addEventListener('DOMContentLoaded', function() {
   cards.forEach(card => {
     card.addEventListener('click', function() {
       const businessId = this.getAttribute('data-id');
-      window.location.href = `/business-profile/${businessId}`;
+      this.classList.add('enlarged-card');
+      setTimeout(() => {
+        window.location.href = `/business-profile/${businessId}`;
+      }, 200);
     });
   });
 });
