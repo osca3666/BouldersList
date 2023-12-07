@@ -582,37 +582,25 @@ app.get('/api/get-ratings', async (req, res) => {
 app.post('/submit-business', async (req, res) => {
   try {
 
-    console.log("hello",req);
-    const { api_business_id, businessName, businessType, businessImageURL } = req.body;
- 
+    //console.log("hello",req);
+    const {businessName, businessType, businessAddress, businessPhoneNumber, businessWebsite, businessImageURL } = req.body;
+    const temp = "aosbdobsaod";
+    const rating = 0;
  
     const query = `
-      INSERT INTO business (api_business_id, name, type, photo_url)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO business (api_business_id, phone_number, name, website, type, photo_url, address,rating)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;`;
  
  
-    const data = await db.one(query, [api_business_id, businessName, businessType, businessImageURL]);
+    const data = await db.one(query, [temp,businessPhoneNumber, businessName, businessWebsite, businessType,businessImageURL,businessAddress, rating]);
  
- 
-    console.log(data);
-    res.status(201).json({
-      status: 'success',
-      message: 'Business added successfully.',
-      data: {
-        business_id: data.business_id,
-        name: data.name,
-        type: data.type,
-        photo_url: data.photo_url,
-      },
-    });
+
+    res.redirect('/');
+    
   } catch (err) {
     console.error(err);
-    res.status(400).json({
-      status: 'error',
-      message: 'Business upload failed.',
-      error: err.message,
-    });
+    res.redirect('/');
   }
  });
  
