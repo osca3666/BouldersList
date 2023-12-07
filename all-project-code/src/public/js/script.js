@@ -74,7 +74,7 @@ function sortCards(sortType) {
     // Do not sort if the default option is selected
     return;
   }
-  const cardsContainer = document.querySelector('.row.row-cols-1.row-cols-md-2.g-4');
+  const cardsContainer = document.querySelector('.row.row-cols-1.row-cols-md-3.g-4');
   let cards = document.querySelectorAll('.col');
 
   cards = Array.from(cards).sort((a, b) => {

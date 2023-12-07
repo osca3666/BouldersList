@@ -59,16 +59,14 @@
                     <% } %>
           
                     <div class="card-overlay"></div>
-                    <br><br><br>
+                    <br><br><br><br>
                     <div class="card-body disc">
                       <h6 class="card-title"><%- business[i].name %></h6>
                       <p class="card-text">Type: <%- business[i].type %> | Phone: <%- business[i].phone_number %> | Rating: <%- business[i].rating %></p>
-                      <br>
+                      <small class="text-muted"><%- business[i].address %></small>
                     </div>
         
-                    <div class="card-footer disc">
-                        <small class="text-muted"><%- business[i].address %></small>
-                      </div>
+                
                   </div>
                 </div>
               <% }%>
