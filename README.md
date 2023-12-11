@@ -42,7 +42,7 @@ First, clone the repository to your local machine using Git:
 
 ```bash
 git clone https://github.com/osca3666/SDevProject-6.git
-cd SDev Project-6
+cd SDevProject-6
 ```
 
 ### 2. Start the Application
